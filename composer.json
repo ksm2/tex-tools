@@ -1,0 +1,22 @@
+{
+    "name": "corny-phoenix/tex-tools",
+    "type": "library",
+    "description": "PHP library for (La)TeX abstraction",
+    "keywords": ["tex", "latex", "xelatex", "lualatex", "bibtex", "pdf", "post script"],
+    "homepage": "https://github.com/CornyPhoenix/tex-tools",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Konstantin Simon Maria Möllers",
+            "email": "ksm.moellers@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "symfony/process": "~2.6"
+    },
+    "autoload": {
+        "psr-4": { "CornyPhoenix\\Tex\\": "src" }
+    },
+    "minimum-stability": "dev"
+}
