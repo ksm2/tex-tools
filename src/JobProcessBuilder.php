@@ -3,6 +3,7 @@
 namespace CornyPhoenix\Tex;
 
 use CornyPhoenix\Tex\Executables\ExecutableInterface;
+use CornyPhoenix\Tex\Jobs\Job;
 use Symfony\Component\Process\ProcessBuilder;
 
 class JobProcessBuilder extends ProcessBuilder
@@ -87,8 +88,8 @@ class JobProcessBuilder extends ProcessBuilder
      */
     private function setOutputFormat()
     {
-        if (in_array($this->executable->getOutputFormat(), [FileFormat::PDF, FileFormat::DVI])) {
-            $this->setArgumentValue(self::OPTION_OUTPUT_FORMAT, $this->executable->getOutputFormat());
+        if (in_array($this->executable->getOutputFormats(), [FileFormat::PDF, FileFormat::DVI])) {
+            $this->setArgumentValue(self::OPTION_OUTPUT_FORMAT, $this->executable->getOutputFormats());
         }
 
         return $this;

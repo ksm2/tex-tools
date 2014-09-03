@@ -4,11 +4,6 @@ namespace CornyPhoenix\Tex\Results;
 
 use CornyPhoenix\Tex\Message;
 
-/**
- * User: moellers
- * Date: 02.09.14
- * Time: 19:30
- */
 abstract class AbstractResult implements ResultInterface
 {
 

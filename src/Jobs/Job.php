@@ -1,9 +1,11 @@
 <?php
 
-namespace CornyPhoenix\Tex;
+namespace CornyPhoenix\Tex\Jobs;
 
 use CornyPhoenix\Tex\Exceptions\LogicException;
 use CornyPhoenix\Tex\Executables\ExecutableInterface;
+use CornyPhoenix\Tex\FileFormat;
+use CornyPhoenix\Tex\InteractionMode;
 use CornyPhoenix\Tex\Results\ErrorResult;
 use CornyPhoenix\Tex\Results\ResultInterface;
 use InvalidArgumentException;
@@ -29,17 +31,22 @@ class Job
     /**
      * @var string
      */
-    private $path;
-
-    /**
-     * @var string
-     */
     private $name;
 
     /**
      * @var string
      */
     private $directory;
+
+    /**
+     * @var string
+     */
+    private $inputFormat;
+
+    /**
+     * @var string[]
+     */
+    private $providedFormats;
 
     /**
      * An alternative jobname which will be passed to TeX.
@@ -80,8 +87,8 @@ class Job
      */
     public function __construct($path)
     {
-        $this->setPath($path);
         $this->setDefaults();
+        $this->setPath($path);
     }
 
     /**
@@ -101,11 +108,27 @@ class Job
     }
 
     /**
+     * @return string
+     */
+    public function getInputFormat()
+    {
+        return $this->inputFormat;
+    }
+
+    /**
      * @return bool
      */
     public function hasErrors()
     {
         return $this->hasErrors;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getProvidedFormats()
+    {
+        return $this->providedFormats;
     }
 
     /**
@@ -260,6 +283,14 @@ class Job
     }
 
     /**
+     * @param string[] $formats
+     */
+    public function addProvidedFormats(array $formats)
+    {
+        $this->providedFormats = array_unique(array_merge($this->providedFormats, $formats));
+    }
+
+    /**
      * Sets default values on the job.
      */
     private function setDefaults()
@@ -279,7 +310,7 @@ class Job
      */
     public function getPath()
     {
-        return $this->path;
+        return $this->directory . '/' . $this->name;
     }
 
     /**
@@ -288,9 +319,11 @@ class Job
      */
     private function setPath($path)
     {
-        $this->path = $path;
+        $this->inputFormat = FileFormat::fromPath($path);
         $this->directory = dirname($path);
-        $this->name = basename($path);
+        $this->name = $this->findNameByPath($path);
+
+        $this->providedFormats = [$this->inputFormat];
 
         return $this;
     }
@@ -315,5 +348,17 @@ class Job
     private function createErrorResult($output)
     {
         return new ErrorResult($output);
+    }
+
+    /**
+     * @param $path
+     * @return string
+     */
+    private function findNameByPath($path)
+    {
+        $directoryLength = strlen($this->directory);
+        $formatLength = strlen($this->inputFormat);
+        $name = substr($path, $directoryLength + 1, strlen($path) - $directoryLength - $formatLength - 2);
+        return $name;
     }
 }

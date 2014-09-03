@@ -4,6 +4,7 @@ namespace CornyPhoenix\Tex\Executables;
 
 use CornyPhoenix\Tex;
 use CornyPhoenix\Tex\JobProcessBuilder;
+use CornyPhoenix\Tex\Jobs\Job;
 use Symfony\Component\Process\ExecutableFinder;
 
 abstract class AbstractExecutable implements ExecutableInterface
@@ -43,21 +44,30 @@ abstract class AbstractExecutable implements ExecutableInterface
     /**
      * Runs a TeX job.
      *
-     * @param Tex\Job $job
+     * @param Job $job
      * @param callable $callback
      * @return \Symfony\Component\Process\Process
      * @throws \CornyPhoenix\Tex\Exceptions\SpecificationException
      */
-    public function runJob(Tex\Job $job, callable $callback = null)
+    public function runJob(Job $job, callable $callback = null)
     {
-        $inputFilePath = $job->getPath() . '.' . $this->getInputFormat();
-
-        if (!file_exists($inputFilePath)) {
-            throw $this->createInputFileMissingException();
+        if (!in_array($this->getInputFormat(), $job->getProvidedFormats())) {
+            throw $this->createInputFormatNotProvidedException($job);
         } else {
-            $process = $this->createProcess($job);
-            $process->run($callback);
-            return $process;
+            $inputFilePath = $job->getPath() . '.' . $this->getInputFormat();
+
+            if (!file_exists($inputFilePath)) {
+                throw $this->createInputFileMissingException();
+            } else {
+                $process = $this->createProcess($job);
+                $exitCode = $process->run($callback);
+
+                if ($exitCode === 0) {
+                    $job->addProvidedFormats($this->getOutputFormats());
+                }
+
+                return $process;
+            }
         }
     }
 
@@ -80,7 +90,7 @@ abstract class AbstractExecutable implements ExecutableInterface
      */
     final public function isSupportingOutputFormat($format)
     {
-        return $this->getOutputFormat() === $format;
+        return in_array($format, $this->getOutputFormats());
     }
 
     /**
@@ -102,13 +112,13 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
-     * @param string $format
+     * @param Job $job
      * @return Tex\Exceptions\SpecificationException
      */
-    private function createInputFormatNotSupportedException($format)
+    private function createInputFormatNotProvidedException(Job $job)
     {
         return new Tex\Exceptions\SpecificationException(
-            sprintf('The input file format `%s` is not supported by %s.', $format, get_called_class())
+            sprintf('The input file format `%s` is not provided by job %s.', $this->getInputFormat(), $job->getName())
         );
     }
 
@@ -124,10 +134,10 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
-     * @param \CornyPhoenix\Tex\Job $job
+     * @param Job $job
      * @return \Symfony\Component\Process\Process
      */
-    private function createProcess(Tex\Job $job)
+    protected function createProcess(Job $job)
     {
         $process = $this->processBuilder->setJob($job)->getProcess();
         return $process;

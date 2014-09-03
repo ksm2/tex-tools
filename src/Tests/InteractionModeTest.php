@@ -4,11 +4,6 @@ namespace CornyPhoenix\Tex\Tests;
 
 use CornyPhoenix\Tex\InteractionMode;
 
-/**
- * User: moellers
- * Date: 01.09.14
- * Time: 23:51
- */
 class InteractionModeTest extends \PHPUnit_Framework_TestCase
 {
 

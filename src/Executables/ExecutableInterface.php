@@ -29,11 +29,11 @@ interface ExecutableInterface
     public function getInputFormat();
 
     /**
-     * Returns the output format that can be produced.
+     * Returns the output formats that can be produced.
      *
-     * @return string
+     * @return string[]
      */
-    public function getOutputFormat();
+    public function getOutputFormats();
 
     /**
      * Returns prefix marking each option.
@@ -61,9 +61,9 @@ interface ExecutableInterface
     /**
      * Runs a TeX job.
      *
-     * @param Tex\Job $job
+     * @param \CornyPhoenix\Tex\Jobs\Job $job
      * @throws Tex\Exceptions\SpecificationException
      * @return \Symfony\Component\Process\Process
      */
-    public function runJob(Tex\Job $job);
+    public function runJob(Tex\Jobs\Job $job);
 }

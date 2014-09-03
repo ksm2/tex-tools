@@ -2,17 +2,9 @@
 
 namespace CornyPhoenix\Tex\Tests;
 
-use CornyPhoenix\Tex\Executables\PdfLuaLatexExecutable;
-use CornyPhoenix\Tex\Executables\PdfLatexExecutable;
+use CornyPhoenix\Tex\Executables\LaTex\PdfLaTexExecutable;
 use CornyPhoenix\Tex\FileFormat;
-use CornyPhoenix\Tex\Job;
-use CornyPhoenix\Tex\LaTexJob;
 
-/**
- * User: moellers
- * Date: 02.09.14
- * Time: 01:12
- */
 class ExecutableTest extends \PHPUnit_Framework_TestCase
 {
 

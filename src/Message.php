@@ -2,11 +2,6 @@
 
 namespace CornyPhoenix\Tex;
 
-/**
- * User: moellers
- * Date: 02.09.14
- * Time: 19:33
- */
 class Message
 {
     const LEVEL_ERROR = 3;
