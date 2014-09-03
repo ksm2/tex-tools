@@ -9,7 +9,7 @@ use CornyPhoenix\Tex\FileFormat;
  * Date: 02.09.14
  * Time: 01:14
  */
-class PdfLatexExecutable extends AbstractExecutable
+class DviLatexExecutable extends AbstractExecutable
 {
     const EXECUTABLE = 'pdflatex';
 
@@ -34,7 +34,7 @@ class PdfLatexExecutable extends AbstractExecutable
      */
     public function getOutputFormat()
     {
-        return FileFormat::PDF;
+        return FileFormat::DVI;
     }
 
     /**

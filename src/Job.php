@@ -2,15 +2,34 @@
 
 namespace CornyPhoenix\Tex;
 
+use CornyPhoenix\Tex\Exceptions\LogicException;
+use CornyPhoenix\Tex\Executables\ExecutableInterface;
+use CornyPhoenix\Tex\Results\ErrorResult;
+use CornyPhoenix\Tex\Results\ResultInterface;
 use InvalidArgumentException;
 
 class Job
 {
 
     /**
+     * @var ExecutableInterface[]
+     */
+    private static $executables = array();
+
+    /**
+     * @var bool
+     */
+    private $hasErrors;
+
+    /**
+     * @var ResultInterface
+     */
+    private $result;
+
+    /**
      * @var string
      */
-    private $executablePath;
+    private $path;
 
     /**
      * @var string
@@ -21,16 +40,6 @@ class Job
      * @var string
      */
     private $directory;
-
-    /**
-     * @var string
-     */
-    private $inputFormat;
-
-    /**
-     * @var string
-     */
-    private $outputFormat;
 
     /**
      * An alternative jobname which will be passed to TeX.
@@ -67,29 +76,12 @@ class Job
     private $syncTex;
 
     /**
-     * @param $executablePath
-     * @param string $name
-     * @param string $directory
-     * @param $inputFormat
-     * @param $outputFormat
+     * @param string $path
      */
-    public function __construct($executablePath, $name, $directory, $inputFormat, $outputFormat)
+    public function __construct($path)
     {
-        $this->executablePath = $executablePath;
-        $this->name = $name;
-        $this->directory = $directory;
-        $this->inputFormat = $inputFormat;
-        $this->outputFormat = $outputFormat;
-
+        $this->setPath($path);
         $this->setDefaults();
-    }
-
-    /**
-     * @return string
-     */
-    public function getExecutablePath()
-    {
-        return $this->executablePath;
     }
 
     /**
@@ -109,35 +101,24 @@ class Job
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getInputFormat()
+    public function hasErrors()
     {
-        return $this->inputFormat;
+        return $this->hasErrors;
     }
 
     /**
-     * @return string
+     * @throws LogicException
+     * @return ResultInterface
      */
-    public function getOutputFormat()
+    public function getResult()
     {
-        return $this->outputFormat;
-    }
+        if (null === $this->result) {
+            throw new LogicException('You have to run this job first.');
+        }
 
-    /**
-     * @return string
-     */
-    public function getInputFileName()
-    {
-        return $this->name . '.' . $this->inputFormat;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOutputFileName()
-    {
-        return $this->name . '.' . $this->outputFormat;
+        return $this->result;
     }
 
     /**
@@ -259,6 +240,26 @@ class Job
     }
 
     /**
+     * @param string $executableClass
+     * @param callable $callback
+     * @return $this
+     */
+    public function run($executableClass, callable $callback = null)
+    {
+        if (!$this->hasErrors) {
+            $executable = $this->findExecutableByClass($executableClass);
+
+            $process = $executable->runJob($this, $callback);
+            if (1 === $process->getExitCode()) {
+                $this->hasErrors = true;
+                $this->result = $this->createErrorResult($process->getOutput());
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Sets default values on the job.
      */
     private function setDefaults()
@@ -269,5 +270,50 @@ class Job
         $this->syncTex = null;
         $this->shellEscape = false;
         $this->draftMode = false;
+        $this->hasErrors = false;
+        $this->result = null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     * @return $this
+     */
+    private function setPath($path)
+    {
+        $this->path = $path;
+        $this->directory = dirname($path);
+        $this->name = basename($path);
+
+        return $this;
+    }
+
+    /**
+     * @param string $executableClass
+     * @return \CornyPhoenix\Tex\Executables\ExecutableInterface
+     */
+    private function findExecutableByClass($executableClass)
+    {
+        if (!isset(self::$executables[$executableClass])) {
+            self::$executables[$executableClass] = new $executableClass();
+        }
+
+        return self::$executables[$executableClass];
+    }
+
+    /**
+     * @param string $output
+     * @return ErrorResult
+     */
+    private function createErrorResult($output)
+    {
+        return new ErrorResult($output);
     }
 }

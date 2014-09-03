@@ -4,7 +4,7 @@ namespace CornyPhoenix\Tex\Results;
 
 use CornyPhoenix\Tex\FileFormat;
 
-class ErrorResult implements ResultInterface
+class ErrorResult extends AbstractResult
 {
 
     /**
@@ -13,5 +13,15 @@ class ErrorResult implements ResultInterface
     public function getResultFormat()
     {
         return FileFormat::LOG;
+    }
+
+    /**
+     * Returns true, if this result has errors.
+     *
+     * @return bool
+     */
+    public function hasErrors()
+    {
+        return true;
     }
 }

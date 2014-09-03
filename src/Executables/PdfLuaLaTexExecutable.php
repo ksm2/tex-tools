@@ -9,9 +9,9 @@ use CornyPhoenix\Tex\FileFormat;
  * Date: 02.09.14
  * Time: 01:14
  */
-class PdfLatexExecutable extends AbstractExecutable
+class PdfLuaLatexExecutable extends AbstractExecutable
 {
-    const EXECUTABLE = 'pdflatex';
+    const EXECUTABLE = 'lualatex';
 
     /**
      * @return string
@@ -44,6 +44,6 @@ class PdfLatexExecutable extends AbstractExecutable
      */
     public function getOptionPrefix()
     {
-        return '-';
+        return '--';
     }
 }

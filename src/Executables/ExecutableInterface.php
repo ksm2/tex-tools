@@ -29,6 +29,20 @@ interface ExecutableInterface
     public function getInputFormat();
 
     /**
+     * Returns the output format that can be produced.
+     *
+     * @return string
+     */
+    public function getOutputFormat();
+
+    /**
+     * Returns prefix marking each option.
+     *
+     * @return string
+     */
+    public function getOptionPrefix();
+
+    /**
      * Checks, whether a input format is supported.
      *
      * @param string $format
@@ -45,12 +59,11 @@ interface ExecutableInterface
     public function isSupportingOutputFormat($format);
 
     /**
-     * Creates a TeX job.
+     * Runs a TeX job.
      *
-     * @param string $inputFilePath
-     * @param string $outputFormat
-     * @throws \CornyPhoenix\Tex\Exceptions\SpecificationException
-     * @return Tex\Job
+     * @param Tex\Job $job
+     * @throws Tex\Exceptions\SpecificationException
+     * @return \Symfony\Component\Process\Process
      */
-    public function createJob($inputFilePath, $outputFormat);
+    public function runJob(Tex\Job $job);
 }

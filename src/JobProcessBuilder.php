@@ -2,6 +2,7 @@
 
 namespace CornyPhoenix\Tex;
 
+use CornyPhoenix\Tex\Executables\ExecutableInterface;
 use Symfony\Component\Process\ProcessBuilder;
 
 class JobProcessBuilder extends ProcessBuilder
@@ -11,21 +12,24 @@ class JobProcessBuilder extends ProcessBuilder
     const OPTION_SYNC_TEX = 'synctex';
     const OPTION_OUTPUT_FORMAT = 'output-format';
     const OPTION_OUTPUT_DIRECTORY = 'output-directory';
-
     const OPTION_SHELL_ESCAPE = 'shell-escape';
-
     const OPTION_NO_SHELL_ESCAPE = 'no-shell-escape';
-
     const OPTION_DRAFT_MODE = 'draftmode';
 
     /**
-     * @param Job $job
+     * @var ExecutableInterface
      */
-    public function __construct(Job $job)
+    private $executable;
+
+    /**
+     * @param Executables\ExecutableInterface $executable
+     */
+    public function __construct(ExecutableInterface $executable)
     {
         parent::__construct();
 
-        $this->setJob($job);
+        // Set application to execute
+        $this->setExecutable($executable);
     }
 
     /**
@@ -37,14 +41,10 @@ class JobProcessBuilder extends ProcessBuilder
         // Clear the job
         $this->clearArguments();
 
-        // Set application to execute
-        $this->setPrefix($job->getExecutablePath());
-
         // Set values
         $this->setArgumentValue(self::OPTION_JOBNAME, $job->getJobname());
         $this->setArgumentValue(self::OPTION_INTERACTION_MODE, $job->getInteractionMode());
         $this->setArgumentValue(self::OPTION_SYNC_TEX, $job->getSyncTex());
-        $this->setArgumentValue(self::OPTION_OUTPUT_FORMAT, $job->getOutputFormat());
         $this->setArgumentValue(self::OPTION_OUTPUT_DIRECTORY, $job->getOutputDirectory());
 
         // Set bool arguments
@@ -54,9 +54,52 @@ class JobProcessBuilder extends ProcessBuilder
 
         // Set input file
         $this->setWorkingDirectory($job->getDirectory());
-        $this->add($job->getInputFileName());
+
+        // Suffix
+        $this->setOutputFormat();
+        $this->setInputFile($job);
 
         return $this;
+    }
+
+    /**
+     * @return ExecutableInterface
+     */
+    public function getExecutable()
+    {
+        return $this->executable;
+    }
+
+    /**
+     * @param ExecutableInterface $executable
+     * @return $this
+     */
+    public function setExecutable(ExecutableInterface $executable)
+    {
+        $this->executable = $executable;
+        $this->setPrefix($executable->getPath());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function setOutputFormat()
+    {
+        if (in_array($this->executable->getOutputFormat(), [FileFormat::PDF, FileFormat::DVI])) {
+            $this->setArgumentValue(self::OPTION_OUTPUT_FORMAT, $this->executable->getOutputFormat());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Job $job
+     */
+    private function setInputFile(Job $job)
+    {
+        $this->add($job->getName() . '.' . $this->executable->getInputFormat());
     }
 
     /**
@@ -67,10 +110,10 @@ class JobProcessBuilder extends ProcessBuilder
      * @param mixed|null $value
      * @return JobProcessBuilder
      */
-    public function setArgumentValue($option, $value)
+    private function setArgumentValue($option, $value)
     {
         if (null !== $value) {
-            $this->add(sprintf('--%s=%s', $option, strval($value)));
+            $this->add(sprintf('%s%s=%s', $this->executable->getOptionPrefix(), $option, strval($value)));
         }
         return $this;
     }
@@ -82,10 +125,10 @@ class JobProcessBuilder extends ProcessBuilder
      * @param bool $bool
      * @return JobProcessBuilder
      */
-    public function setArgumentBool($option, $bool)
+    private function setArgumentBool($option, $bool)
     {
         if ($bool) {
-            $this->add(sprintf('--%s', $option));
+            $this->add(sprintf('%s%s', $this->executable->getOptionPrefix(), $option));
         }
         return $this;
     }
@@ -93,7 +136,7 @@ class JobProcessBuilder extends ProcessBuilder
     /**
      * Clears all arguments. The prefix remains.
      */
-    public function clearArguments()
+    private function clearArguments()
     {
         $this->setArguments(array());
     }

@@ -3,48 +3,61 @@
 namespace CornyPhoenix\Tex\Executables;
 
 use CornyPhoenix\Tex;
+use CornyPhoenix\Tex\JobProcessBuilder;
 use Symfony\Component\Process\ExecutableFinder;
 
 abstract class AbstractExecutable implements ExecutableInterface
 {
 
     /**
+     * @var JobProcessBuilder
+     */
+    private $processBuilder;
+
+    /**
+     * @var string
+     */
+    private $path;
+
+    /**
+     * Creates a new TeX executable.
+     */
+    public function __construct()
+    {
+        // Find executable
+        $finder = new ExecutableFinder();
+        $this->path = $finder->find($this->getName());
+
+        // Create a process builder
+        $this->processBuilder = $this->createProcessBuilder();
+    }
+
+    /**
      * @return string
      */
     public function getPath()
     {
-        $finder = new ExecutableFinder();
-        return $finder->find($this->getName());
+        return $this->path;
     }
 
     /**
-     * Creates a TeX job.
+     * Runs a TeX job.
      *
-     * @param string $inputFilePath
-     * @param string $outputFormat
+     * @param Tex\Job $job
+     * @param callable $callback
+     * @return \Symfony\Component\Process\Process
      * @throws \CornyPhoenix\Tex\Exceptions\SpecificationException
-     * @return Tex\Job
      */
-    public function createJob($inputFilePath, $outputFormat)
+    public function runJob(Tex\Job $job, callable $callback = null)
     {
-        if (!$this->isSupportingOutputFormat($outputFormat)) {
-            throw $this->createOutputFormatNotSupportedException($outputFormat);
-        }
+        $inputFilePath = $job->getPath() . '.' . $this->getInputFormat();
 
         if (!file_exists($inputFilePath)) {
             throw $this->createInputFileMissingException();
         } else {
-            if (!preg_match('/^(.*)\\/([^\\/]+)\\.([^\\.]+)$/', $inputFilePath, $matches)) {
-                throw $this->createMalformedInputFilePathException();
-            } else {
-                list(, $directory, $name, $format) = $matches;
-
-                if (!$this->isSupportingInputFormat($format)) {
-                    throw $this->createInputFormatNotSupportedException($format);
-                }
-
-                return new Tex\Job($this->getPath(), $name, $directory, $format, $outputFormat);
-            }
+            $process = $this->createProcess($job);
+            $process->run($callback);
+            return $process;
         }
     }
 
@@ -67,15 +80,8 @@ abstract class AbstractExecutable implements ExecutableInterface
      */
     final public function isSupportingOutputFormat($format)
     {
-        return in_array($format, $this->getSupportedOutputFormats());
+        return $this->getOutputFormat() === $format;
     }
-
-    /**
-     * Returns the output formats that can be produced.
-     *
-     * @return string[]
-     */
-    abstract public function getSupportedOutputFormats();
 
     /**
      * @return Tex\Exceptions\SpecificationException
@@ -115,5 +121,23 @@ abstract class AbstractExecutable implements ExecutableInterface
         return new Tex\Exceptions\SpecificationException(
             sprintf('The output file format `%s` is not supported by %s.', $format, get_called_class())
         );
+    }
+
+    /**
+     * @param \CornyPhoenix\Tex\Job $job
+     * @return \Symfony\Component\Process\Process
+     */
+    private function createProcess(Tex\Job $job)
+    {
+        $process = $this->processBuilder->setJob($job)->getProcess();
+        return $process;
+    }
+
+    /**
+     * @return JobProcessBuilder
+     */
+    private function createProcessBuilder()
+    {
+        return new JobProcessBuilder($this);
     }
 }
