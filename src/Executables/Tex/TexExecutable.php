@@ -1,10 +1,15 @@
-<?php
+<?php /** File containing class TexExecutable */
 
 namespace CornyPhoenix\Tex\Executables\Tex;
 
 use CornyPhoenix\Tex\Executables\AbstractExecutable;
 use CornyPhoenix\Tex\FileFormat;
 
+/**
+ * Executable class for the TeX command.
+ *
+ * @package CornyPhoenix\Tex\Executables\Tex
+ */
 class TexExecutable extends AbstractExecutable
 {
 
@@ -36,15 +41,5 @@ class TexExecutable extends AbstractExecutable
     public function getOutputFormats()
     {
         return [FileFormat::DVI, FileFormat::LOG, FileFormat::AUXILIARY];
-    }
-
-    /**
-     * Returns prefix marking each option.
-     *
-     * @return string
-     */
-    public function getOptionPrefix()
-    {
-        return '-';
     }
 }

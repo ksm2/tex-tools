@@ -1,9 +1,14 @@
-<?php
+<?php /** File containing class PdfTexExecutable */
 
 namespace CornyPhoenix\Tex\Executables\Tex;
 
 use CornyPhoenix\Tex\FileFormat;
 
+/**
+ * Executable class for the PdfTeX command.
+ *
+ * @package CornyPhoenix\Tex\Executables\Tex
+ */
 class PdfTexExecutable extends TexExecutable
 {
 

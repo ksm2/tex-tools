@@ -1,13 +1,20 @@
-<?php
+<?php /** File containing class LaTexJob */
 
 namespace CornyPhoenix\Tex\Jobs;
 
 use CornyPhoenix\Tex\Executables\LaTex;
 
+/**
+ * Class providing direct LaTeX commands for Jobs.
+ *
+ * @package CornyPhoenix\Tex\Jobs
+ */
 class LaTexJob extends TexJob
 {
 
     /**
+     * Runs the PdfLaTeX command.
+     *
      * @param callable $callback
      * @return $this
      */
@@ -17,6 +24,8 @@ class LaTexJob extends TexJob
     }
 
     /**
+     * Runs the LaTeX command.
+     *
      * @param callable $callback
      * @return $this
      */
@@ -26,6 +35,8 @@ class LaTexJob extends TexJob
     }
 
     /**
+     * Runs the XeLaTeX command.
+     *
      * @param callable $callback
      * @return $this
      */
@@ -35,6 +46,8 @@ class LaTexJob extends TexJob
     }
 
     /**
+     * Runs the LuaLaTeX command.
+     *
      * @param callable $callback
      * @return $this
      */

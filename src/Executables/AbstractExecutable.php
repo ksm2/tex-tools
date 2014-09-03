@@ -1,4 +1,4 @@
-<?php
+<?php /** File containing class AbstractExecutable */
 
 namespace CornyPhoenix\Tex\Executables;
 
@@ -7,15 +7,24 @@ use CornyPhoenix\Tex\JobProcessBuilder;
 use CornyPhoenix\Tex\Jobs\Job;
 use Symfony\Component\Process\ExecutableFinder;
 
+/**
+ * Abstract class providing general executable logic.
+ *
+ * @package CornyPhoenix\Tex\Executables
+ */
 abstract class AbstractExecutable implements ExecutableInterface
 {
 
     /**
+     * A process builder operated by this executable.
+     *
      * @var JobProcessBuilder
      */
     private $processBuilder;
 
     /**
+     * The file path to the executable on the operating system.
+     *
      * @var string
      */
     private $path;
@@ -34,6 +43,8 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
+     * Returns the file path to the executable on the operating system.
+     *
      * @return string
      */
     public function getPath()
@@ -72,6 +83,16 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
+     * Returns prefix marking each option.
+     *
+     * @return string
+     */
+    public function getOptionPrefix()
+    {
+        return '-';
+    }
+
+    /**
      * Checks, whether a input format is supported.
      *
      * @param string $format
@@ -94,6 +115,8 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
+     * Creates an InputFileMissingException.
+     *
      * @return Tex\Exceptions\SpecificationException
      */
     private function createInputFileMissingException()
@@ -102,16 +125,8 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
-     * @return Tex\Exceptions\SpecificationException
-     */
-    private function createMalformedInputFilePathException()
-    {
-        return new Tex\Exceptions\SpecificationException(
-            'The input file is not correct, maybe the extension is missing.'
-        );
-    }
-
-    /**
+     * Creates an InputFormatNotProvidedException.
+     *
      * @param Job $job
      * @return Tex\Exceptions\SpecificationException
      */
@@ -123,17 +138,8 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
-     * @param string $format
-     * @return Tex\Exceptions\SpecificationException
-     */
-    private function createOutputFormatNotSupportedException($format)
-    {
-        return new Tex\Exceptions\SpecificationException(
-            sprintf('The output file format `%s` is not supported by %s.', $format, get_called_class())
-        );
-    }
-
-    /**
+     * Creates a process for a TeX Job.
+     *
      * @param Job $job
      * @return \Symfony\Component\Process\Process
      */
@@ -144,6 +150,8 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
+     * Creates the process builder.
+     *
      * @return JobProcessBuilder
      */
     private function createProcessBuilder()

@@ -1,7 +1,12 @@
-<?php
+<?php /** File containing class LuaLaTexExecutable */
 
 namespace CornyPhoenix\Tex\Executables\LaTex;
 
+/**
+ * Executable class for the LuaLaTeX command.
+ *
+ * @package CornyPhoenix\Tex\Executables\LaTex
+ */
 class LuaLaTexExecutable extends PdfLaTexExecutable
 {
 
@@ -16,6 +21,8 @@ class LuaLaTexExecutable extends PdfLaTexExecutable
     }
 
     /**
+     * Returns prefix marking each option.
+     *
      * @return string
      */
     public function getOptionPrefix()

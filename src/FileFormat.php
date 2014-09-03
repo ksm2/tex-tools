@@ -1,7 +1,12 @@
-<?php
+<?php /** File containing helper class FileFormat */
 
 namespace CornyPhoenix\Tex;
 
+/**
+ * Helper class for TeX file formats.
+ *
+ * @package CornyPhoenix\Tex
+ */
 class FileFormat
 {
 

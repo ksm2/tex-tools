@@ -1,4 +1,4 @@
-<?php
+<?php /** File containing class BibTexExecutable */
 
 namespace CornyPhoenix\Tex\Executables\Tex;
 
@@ -8,6 +8,11 @@ use CornyPhoenix\Tex;
 use CornyPhoenix\Tex\Jobs\Job;
 use Symfony\Component\Process\ProcessBuilder;
 
+/**
+ * Executable class for the BibTeX command.
+ *
+ * @package CornyPhoenix\Tex\Executables\Tex
+ */
 class BibTexExecutable extends AbstractExecutable
 {
 
@@ -42,16 +47,8 @@ class BibTexExecutable extends AbstractExecutable
     }
 
     /**
-     * Returns prefix marking each option.
+     * Creates a process for a BibTeX Job.
      *
-     * @return string
-     */
-    public function getOptionPrefix()
-    {
-        return '-';
-    }
-
-    /**
      * @param Job $job
      * @return \Symfony\Component\Process\Process
      */

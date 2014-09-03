@@ -1,4 +1,4 @@
-<?php
+<?php /** File containing class JobProcessBuilder */
 
 namespace CornyPhoenix\Tex;
 
@@ -6,6 +6,11 @@ use CornyPhoenix\Tex\Executables\ExecutableInterface;
 use CornyPhoenix\Tex\Jobs\Job;
 use Symfony\Component\Process\ProcessBuilder;
 
+/**
+ * ProcessBuilder for TeX Jobs.
+ *
+ * @package CornyPhoenix\Tex
+ */
 class JobProcessBuilder extends ProcessBuilder
 {
     const OPTION_JOBNAME = 'jobname';
@@ -18,11 +23,15 @@ class JobProcessBuilder extends ProcessBuilder
     const OPTION_DRAFT_MODE = 'draftmode';
 
     /**
+     * The executable operating this process builder.
+     *
      * @var ExecutableInterface
      */
     private $executable;
 
     /**
+     * Creates a new TeX Job Process Builder.
+     *
      * @param Executables\ExecutableInterface $executable
      */
     public function __construct(ExecutableInterface $executable)
@@ -34,6 +43,8 @@ class JobProcessBuilder extends ProcessBuilder
     }
 
     /**
+     * Sets the processed TeX Job.
+     *
      * @param Job $job
      * @return $this
      */
@@ -64,6 +75,8 @@ class JobProcessBuilder extends ProcessBuilder
     }
 
     /**
+     * Returns the executable operating this process builder.
+     *
      * @return ExecutableInterface
      */
     public function getExecutable()
@@ -72,6 +85,8 @@ class JobProcessBuilder extends ProcessBuilder
     }
 
     /**
+     * Sets the executable operating this process builder.
+     *
      * @param ExecutableInterface $executable
      * @return $this
      */
@@ -84,6 +99,8 @@ class JobProcessBuilder extends ProcessBuilder
     }
 
     /**
+     * Sets the output format argument.
+     *
      * @return $this
      */
     private function setOutputFormat()
@@ -96,6 +113,8 @@ class JobProcessBuilder extends ProcessBuilder
     }
 
     /**
+     * Sets the input file processed.
+     *
      * @param Job $job
      */
     private function setInputFile(Job $job)
@@ -104,8 +123,8 @@ class JobProcessBuilder extends ProcessBuilder
     }
 
     /**
-     * Sets a an option in the arguments, like --$option=$value.
-     * If $value is null, no option will be added.
+     * Sets an option in the arguments, like <pre>--$option=$value</pre>
+     * If <code>$value</code> is <code>null</code>, no option will be added.
      *
      * @param string $option
      * @param mixed|null $value
@@ -120,7 +139,7 @@ class JobProcessBuilder extends ProcessBuilder
     }
 
     /**
-     * Sets a an bool option in the arguments, like --$option.
+     * Sets a an bool option in the arguments, like <pre>--$option</pre>.
      *
      * @param string $option
      * @param bool $bool

@@ -1,4 +1,4 @@
-<?php
+<?php /** File containing class TexJob */
 
 namespace CornyPhoenix\Tex\Jobs;
 
@@ -9,11 +9,17 @@ use CornyPhoenix\Tex\Executables\Tex\PdfTexExecutable;
 use CornyPhoenix\Tex\Executables\Tex\TexExecutable;
 use CornyPhoenix\Tex\FileFormat;
 
+/**
+ * Class providing direct TeX commands for Jobs.
+ *
+ * @package CornyPhoenix\Tex\Jobs
+ */
 class TexJob extends Job
 {
 
     /**
      * Cleans the job directory.
+     *
      * Only TeX files will be deleted.
      * The input file will be saved.
      *
@@ -33,6 +39,8 @@ class TexJob extends Job
     }
 
     /**
+     * Runs the TeX command.
+     *
      * @param callable $callback
      * @return $this
      */
@@ -42,6 +50,8 @@ class TexJob extends Job
     }
 
     /**
+     * Runs the PdfTeX command.
+     *
      * @param callable $callback
      * @return $this
      */
@@ -51,6 +61,8 @@ class TexJob extends Job
     }
 
     /**
+     * Runs the BibTeX command.
+     *
      * @param callable $callback
      * @return $this
      */
@@ -60,6 +72,8 @@ class TexJob extends Job
     }
 
     /**
+     * Runs the BibTeX 8-bit command.
+     *
      * @param callable $callback
      * @return $this
      */
@@ -69,6 +83,8 @@ class TexJob extends Job
     }
 
     /**
+     * Runs the MakeIndex command.
+     *
      * @param callable $callback
      * @return $this
      */

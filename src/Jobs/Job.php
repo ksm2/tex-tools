@@ -1,4 +1,4 @@
-<?php
+<?php /** File containing class Job */
 
 namespace CornyPhoenix\Tex\Jobs;
 
@@ -10,15 +10,23 @@ use CornyPhoenix\Tex\Results\ErrorResult;
 use CornyPhoenix\Tex\Results\ResultInterface;
 use InvalidArgumentException;
 
+/**
+ * Class representing a TeX Job.
+ *
+ * @package CornyPhoenix\Tex\Jobs
+ */
 class Job
 {
 
     /**
      * @var ExecutableInterface[]
+     * @internal
      */
     private static $executables = array();
 
     /**
+     * Saves if this a run had an error.
+     *
      * @var bool
      */
     private $hasErrors;
@@ -29,21 +37,29 @@ class Job
     private $result;
 
     /**
+     * The file name for this TeX Job.
+     *
      * @var string
      */
     private $name;
 
     /**
+     * The working directory of this TeX Job.
+     *
      * @var string
      */
     private $directory;
 
     /**
+     * Format provided during creation.
+     *
      * @var string
      */
     private $inputFormat;
 
     /**
+     * Formats currently provided by this TeX Job.
+     *
      * @var string[]
      */
     private $providedFormats;
@@ -63,21 +79,29 @@ class Job
     private $interactionMode;
 
     /**
+     * The TeX output directory argument.
+     *
      * @var string|null
      */
     private $outputDirectory;
 
     /**
+     * The TeX draft mode argument.
+     *
      * @var bool
      */
     private $draftMode;
 
     /**
+     * The TeX shell escape argument.
+     *
      * @var bool
      */
     private $shellEscape;
 
     /**
+     * The SyncTeX argument.
+     *
      * @var int|null
      */
     private $syncTex;
@@ -92,6 +116,8 @@ class Job
     }
 
     /**
+     * Returns the file name for this TeX Job.
+     *
      * @return string
      */
     public function getName()
@@ -100,6 +126,8 @@ class Job
     }
 
     /**
+     * Returns the working directory of this TeX Job.
+     *
      * @return string
      */
     public function getDirectory()
@@ -108,6 +136,8 @@ class Job
     }
 
     /**
+     * Returns the format provided during creation.
+     *
      * @return string
      */
     public function getInputFormat()
@@ -116,6 +146,8 @@ class Job
     }
 
     /**
+     * Returns whether a run had an error.
+     *
      * @return bool
      */
     public function hasErrors()
@@ -124,6 +156,8 @@ class Job
     }
 
     /**
+     * Returns the formats currently provided by this TeX Job.
+     *
      * @return string[]
      */
     public function getProvidedFormats()
@@ -145,6 +179,8 @@ class Job
     }
 
     /**
+     * Returns an alternative jobname which will be passed to TeX.
+     *
      * @return null|string
      */
     public function getJobname()
@@ -153,6 +189,8 @@ class Job
     }
 
     /**
+     * Sets an alternative jobname which will be passed to TeX.
+     *
      * @param null|string $jobname
      * @return $this
      */
@@ -163,6 +201,8 @@ class Job
     }
 
     /**
+     * Returns the TeX draft mode argument.
+     *
      * @return bool
      */
     public function getDraftMode()
@@ -171,6 +211,8 @@ class Job
     }
 
     /**
+     * Sets the TeX draft mode argument.
+     *
      * @param bool $draftMode
      * @return $this
      */
@@ -181,6 +223,8 @@ class Job
     }
 
     /**
+     * Returns the Mode in which the job will be executed.
+     *
      * @return string
      */
     public function getInteractionMode()
@@ -189,6 +233,8 @@ class Job
     }
 
     /**
+     * Sets the Mode in which the job will be executed.
+     *
      * @param string $interactionMode
      * @throws InvalidArgumentException
      * @return $this
@@ -204,6 +250,8 @@ class Job
     }
 
     /**
+     * Returns the TeX output directory argument.
+     *
      * @return string
      */
     public function getOutputDirectory()
@@ -212,6 +260,8 @@ class Job
     }
 
     /**
+     * Sets the TeX output directory argument.
+     *
      * @param string $outputDirectory
      * @return $this
      */
@@ -222,6 +272,8 @@ class Job
     }
 
     /**
+     * Returns the TeX shell escape argument.
+     *
      * @return boolean
      */
     public function getShellEscape()
@@ -230,6 +282,8 @@ class Job
     }
 
     /**
+     * Sets the TeX shell escape argument.
+     *
      * @param boolean $shellEscape
      * @return $this
      */
@@ -240,6 +294,8 @@ class Job
     }
 
     /**
+     * Returns the SyncTeX argument.
+     *
      * @return int
      */
     public function getSyncTex()
@@ -248,6 +304,8 @@ class Job
     }
 
     /**
+     * Sets the SyncTeX argument.
+     *
      * @param int|null $syncTex
      * @return $this
      */
@@ -263,6 +321,8 @@ class Job
     }
 
     /**
+     * Runs an executable on this TeX Job.
+     *
      * @param string $executableClass
      * @param callable $callback
      * @return $this
@@ -283,6 +343,8 @@ class Job
     }
 
     /**
+     * Adds more formats provided by this Job.
+     *
      * @param string[] $formats
      */
     public function addProvidedFormats(array $formats)
@@ -306,6 +368,8 @@ class Job
     }
 
     /**
+     * Returns the file path of this TeX Job.
+     *
      * @return string
      */
     public function getPath()
@@ -314,6 +378,8 @@ class Job
     }
 
     /**
+     * Sets the file path of this TeX Job.
+     *
      * @param string $path
      * @return $this
      */
@@ -329,8 +395,11 @@ class Job
     }
 
     /**
+     * Finds the executable by a class name.
+     *
      * @param string $executableClass
      * @return \CornyPhoenix\Tex\Executables\ExecutableInterface
+     * @internal
      */
     private function findExecutableByClass($executableClass)
     {
@@ -342,6 +411,8 @@ class Job
     }
 
     /**
+     * Creates an error result.
+     *
      * @param string $output
      * @return ErrorResult
      */
@@ -351,6 +422,8 @@ class Job
     }
 
     /**
+     * Finds the Job name by an absolute file path.
+     *
      * @param $path
      * @return string
      */

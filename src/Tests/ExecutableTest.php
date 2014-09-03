@@ -1,14 +1,21 @@
-<?php
+<?php /** File containing test ExecutableTest */
 
 namespace CornyPhoenix\Tex\Tests;
 
 use CornyPhoenix\Tex\Executables\LaTex\PdfLaTexExecutable;
 use CornyPhoenix\Tex\FileFormat;
 
+/**
+ * Test class for executables.
+ *
+ * @package CornyPhoenix\Tex\Tests
+ */
 class ExecutableTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * Tests if executable supporting input formats are recognized correctly.
+     *
      * @test
      */
     public function testSupportedInputFileFormats()
@@ -22,6 +29,8 @@ class ExecutableTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if executable providing output formats are recognized correctly.
+     *
      * @test
      */
     public function testSupportedOutputFileFormats()

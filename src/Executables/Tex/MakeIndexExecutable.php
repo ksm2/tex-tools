@@ -1,4 +1,4 @@
-<?php
+<?php /** File containing class MakeIndexExecutable */
 
 namespace CornyPhoenix\Tex\Executables\Tex;
 
@@ -7,6 +7,11 @@ use CornyPhoenix\Tex\FileFormat;
 use CornyPhoenix\Tex\Jobs\Job;
 use Symfony\Component\Process\ProcessBuilder;
 
+/**
+ * Executable class for the MakeIndex command.
+ *
+ * @package CornyPhoenix\Tex\Executables\Tex
+ */
 class MakeIndexExecutable extends AbstractExecutable
 {
 
@@ -41,16 +46,8 @@ class MakeIndexExecutable extends AbstractExecutable
     }
 
     /**
-     * Returns prefix marking each option.
+     * Creates a process for a MakeIndex Job.
      *
-     * @return string
-     */
-    public function getOptionPrefix()
-    {
-        return '-';
-    }
-
-    /**
      * @param Job $job
      * @return \Symfony\Component\Process\Process
      */

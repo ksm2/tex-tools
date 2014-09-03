@@ -1,7 +1,12 @@
-<?php
+<?php /** File containing class XeLaTexExecutable */
 
 namespace CornyPhoenix\Tex\Executables\LaTex;
 
+/**
+ * Executable class for the XeLaTeX command.
+ *
+ * @package CornyPhoenix\Tex\Executables\LaTex
+ */
 class XeLaTexExecutable extends PdfLaTexExecutable
 {
 

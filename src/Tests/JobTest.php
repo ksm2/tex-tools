@@ -1,13 +1,20 @@
-<?php
+<?php /** File containing test JobTest */
 
 namespace CornyPhoenix\Tex\Tests;
 
 use CornyPhoenix\Tex\Jobs\Job;
 
+/**
+ * Test class for TeX Jobs.
+ *
+ * @package CornyPhoenix\Tex\Tests
+ */
 class JobTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * Tests if the path properties are set correctly after Job creation.
+     *
      * @test
      */
     public function testPathSetCorrectly()
@@ -21,6 +28,8 @@ class JobTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if the provided format property is set correctly after Job creation.
+     *
      * @test
      */
     public function testProvidedFormats()

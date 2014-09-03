@@ -1,7 +1,12 @@
-<?php
+<?php /** File containing class Message */
 
 namespace CornyPhoenix\Tex;
 
+/**
+ * Class representing a LaTeX message.
+ *
+ * @package CornyPhoenix\Tex
+ */
 class Message
 {
     const LEVEL_ERROR = 3;
@@ -10,31 +15,43 @@ class Message
     const LEVEL_NOTE = 0;
 
     /**
+     * The message log level
+     *
      * @var int
      */
     private $level;
 
     /**
+     * Title of this message
+     *
      * @var string
      */
     private $title;
 
     /**
+     * Help text of this message
+     *
      * @var string
      */
     private $help;
 
     /**
+     * The filename which produced the message
+     *
      * @var string
      */
     private $filename;
 
     /**
+     * The line in the filename producing the message
+     *
      * @var int
      */
     private $line;
 
     /**
+     * Creates a new LaTeX message.
+     *
      * @param string $filename
      * @param string $help
      * @param int $level
@@ -51,6 +68,8 @@ class Message
     }
 
     /**
+     * Returns the filename which produced the message.
+     *
      * @return string
      */
     public function getFilename()
@@ -59,6 +78,8 @@ class Message
     }
 
     /**
+     * Returns the help text of this message.
+     *
      * @return string
      */
     public function getHelp()
@@ -67,6 +88,8 @@ class Message
     }
 
     /**
+     * Returns the message log level.
+     *
      * @return int
      */
     public function getLevel()
@@ -75,6 +98,8 @@ class Message
     }
 
     /**
+     * Returns the line in the filename producing the message.
+     *
      * @return int
      */
     public function getLine()
@@ -83,6 +108,8 @@ class Message
     }
 
     /**
+     * Returns title of this message.
+     *
      * @return string
      */
     public function getTitle()

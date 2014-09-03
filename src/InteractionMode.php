@@ -1,7 +1,12 @@
-<?php
+<?php /** File containing helper class InteractionMode */
 
 namespace CornyPhoenix\Tex;
 
+/**
+ * Helper class for TeX interaction modes.
+ *
+ * @package CornyPhoenix\Tex
+ */
 class InteractionMode
 {
 
@@ -14,6 +19,8 @@ class InteractionMode
     const ERROR_STOP_MODE = 'errorstopmode';
 
     /**
+     * Interaction modes known to TeX.
+     *
      * @var array
      */
     private static $values = [self::BATCH_MODE, self::NONSTOP_MODE, self::SCROLL_MODE, self::ERROR_STOP_MODE];
@@ -26,6 +33,8 @@ class InteractionMode
     }
 
     /**
+     * Determines whether an interaction mode exists.
+     *
      * @param string $interactionMode
      * @return bool
      */

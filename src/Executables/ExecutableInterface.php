@@ -1,9 +1,14 @@
-<?php
+<?php /** File containing interface ExecutableInterface */
 
 namespace CornyPhoenix\Tex\Executables;
 
 use CornyPhoenix\Tex;
 
+/**
+ * Interface for executables
+ *
+ * @package CornyPhoenix\Tex\Executables
+ */
 interface ExecutableInterface
 {
 
