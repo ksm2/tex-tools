@@ -3,6 +3,7 @@
 namespace CornyPhoenix\Tex\Tests;
 
 use CornyPhoenix\Tex\Jobs\Job;
+use CornyPhoenix\Tex\Jobs\LaTexJob;
 
 /**
  * Test class for TeX Jobs.

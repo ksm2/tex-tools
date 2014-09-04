@@ -6,6 +6,8 @@ use CornyPhoenix\Tex\Exceptions\LogicException;
 use CornyPhoenix\Tex\Executables\ExecutableInterface;
 use CornyPhoenix\Tex\FileFormat;
 use CornyPhoenix\Tex\InteractionMode;
+use CornyPhoenix\Tex\Log\Log;
+use CornyPhoenix\Tex\Log\LogParser;
 use CornyPhoenix\Tex\Results\ErrorResult;
 use CornyPhoenix\Tex\Results\ResultInterface;
 use InvalidArgumentException;
@@ -32,9 +34,11 @@ class Job
     private $hasErrors;
 
     /**
-     * @var ResultInterface
+     * The output returned by the last process.
+     *
+     * @var string|null
      */
-    private $result;
+    private $lastOutput;
 
     /**
      * The file name for this TeX Job.
@@ -107,6 +111,8 @@ class Job
     private $syncTex;
 
     /**
+     * Creates a new TeX Job by a source file path.
+     *
      * @param string $path
      */
     public function __construct($path)
@@ -166,16 +172,19 @@ class Job
     }
 
     /**
+     * Returns an OO interface for the LaTeX log.
+     *
      * @throws LogicException
-     * @return ResultInterface
+     * @return Log
      */
-    public function getResult()
+    public function getLog()
     {
-        if (null === $this->result) {
-            throw new LogicException('You have to run this job first.');
+        if (null === $this->lastOutput) {
+            throw new LogicException('You have to run the job first.');
         }
 
-        return $this->result;
+        $parser = new LogParser($this->lastOutput);
+        return $parser->parse();
     }
 
     /**
@@ -334,9 +343,10 @@ class Job
 
             $process = $executable->runJob($this, $callback);
             if (1 === $process->getExitCode()) {
-                $this->hasErrors = true;
-                $this->result = $this->createErrorResult($process->getOutput());
+                $this->hasErrors = true; // Prevents further runs
             }
+
+            $this->lastOutput = $process->getOutput();
         }
 
         return $this;
@@ -364,7 +374,7 @@ class Job
         $this->shellEscape = false;
         $this->draftMode = false;
         $this->hasErrors = false;
-        $this->result = null;
+        $this->lastOutput = null;
     }
 
     /**
@@ -408,17 +418,6 @@ class Job
         }
 
         return self::$executables[$executableClass];
-    }
-
-    /**
-     * Creates an error result.
-     *
-     * @param string $output
-     * @return ErrorResult
-     */
-    private function createErrorResult($output)
-    {
-        return new ErrorResult($output);
     }
 
     /**

@@ -1,18 +1,32 @@
 <?php /** File containing class Message */
 
-namespace CornyPhoenix\Tex;
+namespace CornyPhoenix\Tex\Log;
 
 /**
  * Class representing a LaTeX message.
  *
- * @package CornyPhoenix\Tex
+ * @package CornyPhoenix\Tex\Log
  */
 class Message
 {
-    const LEVEL_ERROR = 3;
-    const LEVEL_WARNING = 2;
-    const LEVEL_BAD_BOX = 1;
-    const LEVEL_NOTE = 0;
+    const ERROR = 3;
+    const WARNING = 2;
+    const BAD_BOX = 1;
+    const NOTE = 0;
+
+    /**
+     * Auto increment
+     *
+     * @var int
+     */
+    private static $lastId = 0;
+
+    /**
+     * The identifier
+     *
+     * @var int
+     */
+    private $id;
 
     /**
      * The message log level
@@ -26,14 +40,14 @@ class Message
      *
      * @var string
      */
-    private $title;
+    private $message;
 
     /**
      * Help text of this message
      *
      * @var string
      */
-    private $help;
+    private $content;
 
     /**
      * The filename which produced the message
@@ -52,19 +66,30 @@ class Message
     /**
      * Creates a new LaTeX message.
      *
-     * @param string $filename
-     * @param string $help
+     * @param string $message
      * @param int $level
+     * @param string $filename
      * @param int $line
-     * @param string $title
+     * @param string $content
      */
-    public function __construct($filename, $help, $level, $line, $title)
+    public function __construct($message, $level, $filename, $line, $content = '')
     {
+        $this->id = self::$lastId++;
+        $this->message = $message;
+        $this->level = intval($level);
         $this->filename = $filename;
-        $this->help = $help;
-        $this->level = $level;
-        $this->line = $line;
-        $this->title = $title;
+        $this->line = intval($line);
+        $this->content = $content;
+    }
+
+    /**
+     * Returns the identifier.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -82,9 +107,9 @@ class Message
      *
      * @return string
      */
-    public function getHelp()
+    public function getContent()
     {
-        return $this->help;
+        return $this->content;
     }
 
     /**
@@ -112,8 +137,8 @@ class Message
      *
      * @return string
      */
-    public function getTitle()
+    public function getMessage()
     {
-        return $this->title;
+        return $this->message;
     }
 }
