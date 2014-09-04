@@ -1,5 +1,6 @@
-TeX Tools for PHP
-=================
+# TeX Tools for PHP 
+
+[![Code Climate](https://codeclimate.com/github/CornyPhoenix/tex-tools/badges/gpa.svg)](https://codeclimate.com/github/CornyPhoenix/tex-tools)
 
 > PHP library for (La)TeX abstraction
 
