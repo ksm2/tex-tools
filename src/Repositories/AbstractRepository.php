@@ -115,7 +115,7 @@ abstract class AbstractRepository implements RepositoryInterface
             function ($path) {
                 return FileFormat::fromPath($path);
             },
-            glob($this->directory . $job->getName() . '.*')
+            glob($this->directory . '/' . $job->getName() . '.*')
         );
     }
 

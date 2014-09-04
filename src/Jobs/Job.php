@@ -28,6 +28,7 @@ class Job
     use TexTrait;
     use LaTexTrait;
     use BibTexTrait;
+    use BlobTrait;
 
     /**
      * @var ExecutableInterface[]
@@ -354,6 +355,22 @@ class Job
         }
 
         return $this;
+    }
+
+    /**
+     * Returns the blob string for a given output format.
+     *
+     * @param string $format
+     * @return string
+     * @throws \CornyPhoenix\Tex\Exceptions\LogicException
+     */
+    public function getBlob($format)
+    {
+        if (!in_array($format, $this->getProvidedFormats())) {
+            throw new LogicException('There is no file with format `' . $format . '` existing.');
+        }
+
+        return $this->repository->getFileBlob($this->getName() . '.' . $format);
     }
 
     /**

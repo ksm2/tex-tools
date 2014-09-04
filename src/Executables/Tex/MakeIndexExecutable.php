@@ -2,17 +2,14 @@
 
 namespace CornyPhoenix\Tex\Executables\Tex;
 
-use CornyPhoenix\Tex\Executables\AbstractExecutable;
 use CornyPhoenix\Tex\FileFormat;
-use CornyPhoenix\Tex\Jobs\Job;
-use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * Executable class for the MakeIndex command.
  *
  * @package CornyPhoenix\Tex\Executables\Tex
  */
-class MakeIndexExecutable extends AbstractExecutable
+class MakeIndexExecutable extends BibTexExecutable
 {
 
     /**
@@ -43,21 +40,5 @@ class MakeIndexExecutable extends AbstractExecutable
     public function getOutputFormats()
     {
         return [FileFormat::INDEX_AUXILIARY, FileFormat::INDEX_LOG];
-    }
-
-    /**
-     * Creates a process for a MakeIndex Job.
-     *
-     * @param Job $job
-     * @return \Symfony\Component\Process\Process
-     */
-    protected function createProcess(Job $job)
-    {
-        $processBuilder = new ProcessBuilder();
-        $processBuilder->setWorkingDirectory($job->getDirectory());
-        $processBuilder->setPrefix($this->getPath());
-        $processBuilder->add($job->getName() . '.' . $this->getInputFormat());
-
-        return $processBuilder->getProcess();
     }
 }

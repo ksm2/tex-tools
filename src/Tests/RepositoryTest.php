@@ -2,7 +2,9 @@
 
 namespace CornyPhoenix\Tex\Tests;
 
+use CornyPhoenix\Tex\FileFormat;
 use CornyPhoenix\Tex\Jobs\Job;
+use CornyPhoenix\Tex\Repositories\ExistingRepository;
 use CornyPhoenix\Tex\Repositories\TemporaryRepository;
 
 /**
@@ -37,5 +39,24 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         // Assure temporary directory is gone after destruction
         $repository->__destruct();
         $this->assertFalse(is_dir($dir), 'Repo dir still exists after destruction');
+    }
+
+    /**
+     * Tests the functionality of existing repositories.
+     *
+     * @test
+     */
+    public function testExistingRepositories()
+    {
+        $dir = realpath(__DIR__ . '/../../data');
+        $repository = new ExistingRepository($dir);
+
+        $this->assertTrue($repository->containsFile('test.tex'));
+        $this->assertCount(1, $repository->getJobs());
+        $this->assertInstanceOf(Job::class, $job = $repository->findJob('test'));
+
+        $this->assertContains(FileFormat::TEX, $repository->findFormatsByJob($job));
+        $repository->clean();
+        $this->assertContains(FileFormat::TEX, $repository->findFormatsByJob($job));
     }
 }
