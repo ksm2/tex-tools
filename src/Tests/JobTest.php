@@ -2,8 +2,11 @@
 
 namespace CornyPhoenix\Tex\Tests;
 
+use CornyPhoenix\Tex\FileFormat;
 use CornyPhoenix\Tex\Jobs\Job;
-use CornyPhoenix\Tex\Jobs\LaTexJob;
+use CornyPhoenix\Tex\Jobs\LaTexTrait;
+use CornyPhoenix\Tex\Repositories\FakeRepository;
+use CornyPhoenix\Tex\Repositories\RepositoryInterface;
 
 /**
  * Test class for TeX Jobs.
@@ -14,18 +17,34 @@ class JobTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * Test repository
+     *
+     * @var RepositoryInterface
+     */
+    private $repository;
+
+    /**
+     * Sets up the test.
+     */
+    protected function setUp()
+    {
+        $this->repository = new FakeRepository();
+    }
+
+    /**
      * Tests if the path properties are set correctly after Job creation.
      *
      * @test
      */
     public function testPathSetCorrectly()
     {
-        $job = new Job('/path/to/my/file.the.extension');
+        $job = new Job($this->repository, 'jobname', 'the.extension');
 
-        $this->assertEquals('/path/to/my', $job->getDirectory());
-        $this->assertEquals('file', $job->getName());
+        $this->assertEquals('jobname', $job->getName());
         $this->assertEquals('the.extension', $job->getInputFormat());
-        $this->assertEquals('/path/to/my/file', $job->getPath());
+        $this->assertEquals('jobname.the.extension', $job->getInputBasename());
+        $this->assertTrue($this->repository->containsFile('jobname.the.extension'));
+        $this->assertEquals($this->repository->getDirectory() . '/jobname', $job->getPath());
     }
 
     /**
@@ -35,9 +54,8 @@ class JobTest extends \PHPUnit_Framework_TestCase
      */
     public function testProvidedFormats()
     {
-        $job = new Job('/path/to/my/file.the.extension');
+        $job = new Job($this->repository, 'jobname', FileFormat::TEX);
 
-        $this->assertContains('the.extension', $job->getProvidedFormats());
-        $this->assertCount(1, $job->getProvidedFormats());
+        $this->assertContains(FileFormat::TEX, $job->getProvidedFormats());
     }
 }

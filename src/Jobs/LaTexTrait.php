@@ -1,15 +1,17 @@
-<?php /** File containing class LaTexJob */
+<?php /** File containing trait LaTexJob */
 
 namespace CornyPhoenix\Tex\Jobs;
 
 use CornyPhoenix\Tex\Executables\LaTex;
 
 /**
- * Class providing direct LaTeX commands for Jobs.
+ * This trait provides LaTeX functionality for the Job class.
  *
  * @package CornyPhoenix\Tex\Jobs
+ * @date 03.09.2014
+ * @author moellers
  */
-class LaTexJob extends TexJob
+trait LaTexTrait
 {
 
     /**

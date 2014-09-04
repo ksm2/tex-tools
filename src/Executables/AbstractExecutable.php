@@ -77,11 +77,7 @@ abstract class AbstractExecutable implements ExecutableInterface
                 throw $this->createInputFileMissingException();
             } else {
                 $process = $this->createProcess($job);
-                $exitCode = $process->run($callback);
-
-                if ($exitCode === 0) {
-                    $job->addProvidedFormats($this->getOutputFormats());
-                }
+                $process->run($callback);
 
                 return $process;
             }

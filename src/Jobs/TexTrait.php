@@ -1,4 +1,4 @@
-<?php /** File containing class TexJob */
+<?php /** File containing trait TexJob */
 
 namespace CornyPhoenix\Tex\Jobs;
 
@@ -10,32 +10,14 @@ use CornyPhoenix\Tex\Executables\Tex\TexExecutable;
 use CornyPhoenix\Tex\FileFormat;
 
 /**
- * Class providing direct TeX commands for Jobs.
+ * This trait provides TeX functionality for the Job class.
  *
  * @package CornyPhoenix\Tex\Jobs
+ * @date 03.09.2014
+ * @author moellers
  */
-class TexJob extends Job
+trait TexTrait
 {
-
-    /**
-     * Cleans the job directory.
-     *
-     * Only TeX files will be deleted.
-     * The input file will be saved.
-     *
-     * @return $this
-     */
-    public function clean()
-    {
-        foreach (glob($this->getPath() . '.*') as $file) {
-            $format = FileFormat::fromPath($file);
-            if ($format !== $this->getInputFormat() && FileFormat::isKnownFormat($format)) {
-                unlink($file);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * Runs the TeX command.
@@ -57,28 +39,6 @@ class TexJob extends Job
     public function runPdfTex(callable $callback = null)
     {
         return $this->run(PdfTexExecutable::class, $callback);
-    }
-
-    /**
-     * Runs the BibTeX command.
-     *
-     * @param callable $callback
-     * @return $this
-     */
-    public function runBibTex(callable $callback = null)
-    {
-        return $this->run(BibTexExecutable::class, $callback);
-    }
-
-    /**
-     * Runs the BibTeX 8-bit command.
-     *
-     * @param callable $callback
-     * @return $this
-     */
-    public function runBibTex8(callable $callback = null)
-    {
-        return $this->run(BibTex8Executable::class, $callback);
     }
 
     /**

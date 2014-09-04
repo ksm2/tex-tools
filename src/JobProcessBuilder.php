@@ -64,11 +64,9 @@ class JobProcessBuilder extends ProcessBuilder
         $this->setArgumentBool(self::OPTION_NO_SHELL_ESCAPE, !$job->getShellEscape());
         $this->setArgumentBool(self::OPTION_DRAFT_MODE, $job->getDraftMode());
 
-        // Set input file
-        $this->setWorkingDirectory($job->getDirectory());
-
-        // Suffix
         $this->setOutputFormat();
+
+        // Set input file
         $this->setInputFile($job);
 
         return $this;
@@ -119,6 +117,7 @@ class JobProcessBuilder extends ProcessBuilder
      */
     private function setInputFile(Job $job)
     {
+        $this->setWorkingDirectory($job->getDirectory());
         $this->add($job->getName() . '.' . $this->executable->getInputFormat());
     }
 

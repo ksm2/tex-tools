@@ -38,9 +38,9 @@ The following TeX commands are supported:
 Create a basic PdfLaTeX job and run it:
 
 ```php
-use CornyPhoenix\Tex\Jobs\LaTexJob;
+use CornyPhoenix\Tex\Repositories\TemporaryRepository;
 
-$job = new LaTexJob('/path/to/my/file.tex');
+$job = new TemporaryRepository()->createJob( /* TeX source */ );
 $job->runPdfLaTex();
 $job->hasErrors(); // False if everything went fine
 ```
@@ -48,24 +48,53 @@ $job->hasErrors(); // False if everything went fine
 You can also chain LaTeX calls:
 
 ```php
-use CornyPhoenix\Tex\Jobs\LaTexJob;
+use CornyPhoenix\Tex\Repositories\TemporaryRepository;
+use CornyPhoenix\Tex\Exceptions\CompilationException;
 
-$job = new LaTexJob('/path/to/my/file.tex');
+$job = new TemporaryRepository()->createJob( /* TeX source */ );
 $job->runPdfLaTex()
     ->runBibTex()
     ->runMakeIndex()
     ->runPdfLaTex()
     ->runPdfLaTex();
-$job->hasErrors(); // False if everything went fine
 ```
 
-Also, there is a safe `clean` method which will clean up your working directory without deleting the input file or any files not known to TeX: 
+There is a lovely interface for handling errors:
 
 ```php
-use CornyPhoenix\Tex\Jobs\TexJob;
+use CornyPhoenix\Tex\Repositories\TemporaryRepository;
+use CornyPhoenix\Tex\Exceptions\CompilationException;
 
-touch('/path/to/my/file.unknown.to.tex');
-$job = new TexJob('/path/to/my/file.tex');
-$job->clean();
-assert(file_exists('/path/to/my/file.unknown.to.tex')); // True
+$job = new TemporaryRepository()->createJob( /* TeX source */ );
+try {
+    $job->runPdfLaTex()
+        ->runBibTex()
+        ->runMakeIndex()
+        ->runPdfLaTex()
+        ->runPdfLaTex();
+} catch (CompilationException $e) {
+    $format = 'Error in %s, line %d: %s';
+    $log = $job->getLog();
+    
+    foreach ($log->getErrors() as $error) {
+        echo sprintf(
+            $format, 
+            $error->getFilename(),
+            $error->getLine(),
+            $error->getMessage()
+        );
+        // handle error ...
+    }
+}
+```
+
+Also, there is a safe `clean` method which will clean up your working directory without deleting the input file or any files unknown to TeX: 
+
+```php
+use CornyPhoenix\Tex\Repositories\TemporaryRepository;
+
+$repo = new TemporaryRepository();
+touch($repo->getDirectory() . '/file.unknown.to.tex');
+$repo->clean();
+assert(file_exists($repo->getDirectory() . '/file.unknown.to.tex')); // True
 ```

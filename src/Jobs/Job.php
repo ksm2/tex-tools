@@ -9,6 +9,9 @@ use CornyPhoenix\Tex\FileFormat;
 use CornyPhoenix\Tex\InteractionMode;
 use CornyPhoenix\Tex\Log\Log;
 use CornyPhoenix\Tex\Log\LogParser;
+use CornyPhoenix\Tex\Repositories\RepositoryInterface;
+use CornyPhoenix\Tex\Executables\Tex;
+use CornyPhoenix\Tex\Executables\LaTex;
 use InvalidArgumentException;
 
 /**
@@ -20,10 +23,24 @@ class Job
 {
 
     /**
+     * Traits for more functionality.
+     */
+    use TexTrait;
+    use LaTexTrait;
+    use BibTexTrait;
+
+    /**
      * @var ExecutableInterface[]
      * @internal
      */
     private static $executables = array();
+
+    /**
+     * The repository which contains this TeX Job.
+     *
+     * @var RepositoryInterface
+     */
+    private $repository;
 
     /**
      * Saves if this a run had an error.
@@ -47,25 +64,11 @@ class Job
     private $name;
 
     /**
-     * The working directory of this TeX Job.
-     *
-     * @var string
-     */
-    private $directory;
-
-    /**
      * Format provided during creation.
      *
      * @var string
      */
     private $inputFormat;
-
-    /**
-     * Formats currently provided by this TeX Job.
-     *
-     * @var string[]
-     */
-    private $providedFormats;
 
     /**
      * An alternative jobname which will be passed to TeX.
@@ -112,12 +115,17 @@ class Job
     /**
      * Creates a new TeX Job by a source file path.
      *
-     * @param string $path
+     * @param \CornyPhoenix\Tex\Repositories\RepositoryInterface $repository
+     * @param string $name
+     * @param string $inputFormat
      */
-    public function __construct($path)
+    public function __construct(RepositoryInterface $repository, $name, $inputFormat)
     {
         $this->setDefaults();
-        $this->setPath($path);
+
+        $this->repository = $repository;
+        $this->name = $name;
+        $this->inputFormat = $inputFormat;
     }
 
     /**
@@ -131,16 +139,6 @@ class Job
     }
 
     /**
-     * Returns the working directory of this TeX Job.
-     *
-     * @return string
-     */
-    public function getDirectory()
-    {
-        return $this->directory;
-    }
-
-    /**
      * Returns the format provided during creation.
      *
      * @return string
@@ -151,13 +149,33 @@ class Job
     }
 
     /**
+     * Returns the input file basename
+     *
+     * @return string
+     */
+    public function getInputBasename()
+    {
+        return $this->name . '.' . $this->inputFormat;
+    }
+
+    /**
      * Returns the file path of this TeX Job.
      *
      * @return string
      */
     public function getPath()
     {
-        return $this->directory . '/' . $this->name;
+        return $this->repository->getDirectory() . '/' . $this->name;
+    }
+
+    /**
+     * Returns the working directory of this TeX Job.
+     *
+     * @return string
+     */
+    public function getDirectory()
+    {
+        return $this->repository->getDirectory();
     }
 
     /**
@@ -177,7 +195,7 @@ class Job
      */
     public function getProvidedFormats()
     {
-        return $this->providedFormats;
+        return $this->repository->findFormatsByJob($this);
     }
 
     /**
@@ -369,13 +387,23 @@ class Job
     }
 
     /**
-     * Adds more formats provided by this Job.
+     * Cleans the job directory.
      *
-     * @param string[] $formats
+     * Only TeX files will be deleted.
+     * The input file will be saved.
+     *
+     * @return Job
      */
-    public function addProvidedFormats(array $formats)
+    public function clean()
     {
-        $this->providedFormats = array_unique(array_merge($this->providedFormats, $formats));
+        foreach (glob($this->getPath() . '.*') as $file) {
+            $format = FileFormat::fromPath($file);
+            if ($format !== $this->getInputFormat() && FileFormat::isKnownFormat($format)) {
+                unlink($file);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -394,23 +422,6 @@ class Job
     }
 
     /**
-     * Sets the file path of this TeX Job.
-     *
-     * @param string $path
-     * @return $this
-     */
-    private function setPath($path)
-    {
-        $this->inputFormat = FileFormat::fromPath($path);
-        $this->directory = dirname($path);
-        $this->name = $this->findNameByPath($path);
-
-        $this->providedFormats = [$this->inputFormat];
-
-        return $this;
-    }
-
-    /**
      * Finds the executable by a class name.
      *
      * @param string $executableClass
@@ -424,20 +435,6 @@ class Job
         }
 
         return self::$executables[$executableClass];
-    }
-
-    /**
-     * Finds the Job name by an absolute file path.
-     *
-     * @param $path
-     * @return string
-     */
-    private function findNameByPath($path)
-    {
-        $directoryLength = strlen($this->directory);
-        $formatLength = strlen($this->inputFormat);
-        $name = substr($path, $directoryLength + 1, strlen($path) - $directoryLength - $formatLength - 2);
-        return $name;
     }
 
     /**
