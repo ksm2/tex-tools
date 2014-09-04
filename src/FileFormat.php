@@ -99,15 +99,13 @@ class FileFormat
         $pos = strpos($basename, '.');
         if (false === $pos) {
             return null;
-        } else {
-            return substr($basename, $pos + 1);
         }
-    }
 
-    /**
-     * Should never be instantiated.
-     */
-    private function __construct()
-    {
+        $str = substr($basename, $pos + 1);
+        if (false === $str) {
+            return null;
+        }
+
+        return $str;
     }
 }
