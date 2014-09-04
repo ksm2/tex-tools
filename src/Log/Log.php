@@ -38,27 +38,19 @@ class Log
     private $all;
 
     /**
-     * The root files.
-     *
-     * @var string[]
-     */
-    private $rootFiles;
-
-    /**
      * Creates a log object.
      *
      * @param Message[] $all
      * @param Message[] $badBoxes
      * @param Message[] $errors
-     * @param string[] $rootFiles
      * @param Message[] $warnings
+     * @internal param \string[] $rootFiles
      */
-    public function __construct(array $all, array $badBoxes, array $errors, array $rootFiles, array $warnings)
+    public function __construct(array $all, array $badBoxes, array $errors, array $warnings)
     {
         $this->all = $all;
         $this->badBoxes = $badBoxes;
         $this->errors = $errors;
-        $this->rootFiles = $rootFiles;
         $this->warnings = $warnings;
     }
 
@@ -100,15 +92,5 @@ class Log
     public function getAllMessages()
     {
         return $this->all;
-    }
-
-    /**
-     * Returns root files.
-     *
-     * @return string[]
-     */
-    public function getRootFiles()
-    {
-        return $this->rootFiles;
     }
 }

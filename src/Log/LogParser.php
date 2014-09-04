@@ -13,6 +13,8 @@ class LogParser
 
     // Define some constants
     const GENERAL_WARNING_REGEX = "/^LaTeX Warning: (.*)$/";
+    const FONT_WARNING_REGEX = "/^LaTeX Font Warning: (.*)$/";
+    const FONT_SECOND_REGEX = "/^\\(Font\\)              (.*)$/";
     const BAD_BOX_REGEX = "/^(Over|Under)full \\\\(v|h)box/";
     const BIBER_WARNING_REGEX = "/^Package biblatex Warning: (.*)$/";
     const NATBIB_WARNING_REGEX = "/^Package natbib Warning: (.*)$/";
@@ -114,6 +116,8 @@ class LogParser
                 $this->messages[] = new Message($message, Message::ERROR, $this->currentFilePath, $line, $content);
             } elseif ($this->currentLineIsWarning()) {
                 $this->parseSingleWarningLine(self::GENERAL_WARNING_REGEX);
+            } elseif ($this->currentLineIsFontWarning()) {
+                $this->parseFontWarningLine();
             } elseif ($this->currentLineIsBadBox()) {
                 $this->parseBadBoxLine();
             } elseif ($this->currentLineIsBiberWarning()) {
@@ -146,6 +150,16 @@ class LogParser
     private function currentLineIsWarning()
     {
         return 0 !== preg_match(self::GENERAL_WARNING_REGEX, $this->currentLine);
+    }
+
+    /**
+     * Determines if the current line is a general LaTeX warning.
+     *
+     * @return bool
+     */
+    private function currentLineIsFontWarning()
+    {
+        return 0 !== preg_match(self::FONT_WARNING_REGEX, $this->currentLine);
     }
 
     /**
@@ -197,6 +211,36 @@ class LogParser
             Message::WARNING,
             $this->currentFilePath,
             $line
+        );
+    }
+
+    /**
+     * Parses font warning lines.
+     */
+    private function parseFontWarningLine()
+    {
+        $subject = $this->currentLine;
+        if (0 === preg_match(self::FONT_WARNING_REGEX, $subject, $warningMatch)) {
+            return;
+        }
+        $warning = $warningMatch[1];
+
+        $subject = $this->logText->nextLine();
+        if (0 === preg_match(self::FONT_SECOND_REGEX, $subject, $warningMatch)) {
+            $this->logText->previousLine();
+            $content = '';
+        } else {
+            $content = $warningMatch[1];
+        }
+
+        $line = 0 !== preg_match(self::LINES_REGEX, $content, $lineMatch) ? intval($lineMatch[1], 10) : null;
+
+        $this->messages[] = new Message(
+            $warning,
+            Message::WARNING,
+            $this->currentFilePath,
+            $line,
+            $content
         );
     }
 
@@ -341,6 +385,6 @@ class LogParser
             }
         }
 
-        return new Log($this->messages, $badBoxes, $errors, $this->rootFileList, $warnings);
+        return new Log($this->messages, $badBoxes, $errors, $warnings);
     }
 }

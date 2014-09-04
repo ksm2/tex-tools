@@ -15,20 +15,6 @@ class Message
     const NOTE = 0;
 
     /**
-     * Auto increment
-     *
-     * @var int
-     */
-    private static $lastId = 0;
-
-    /**
-     * The identifier
-     *
-     * @var int
-     */
-    private $id;
-
-    /**
      * The message log level
      *
      * @var int
@@ -74,22 +60,11 @@ class Message
      */
     public function __construct($message, $level, $filename, $line, $content = '')
     {
-        $this->id = self::$lastId++;
         $this->message = $message;
         $this->level = intval($level);
         $this->filename = $filename;
-        $this->line = intval($line);
+        $this->line = null === $line ? null : intval($line);
         $this->content = $content;
-    }
-
-    /**
-     * Returns the identifier.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

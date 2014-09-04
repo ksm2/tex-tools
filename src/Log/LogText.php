@@ -69,13 +69,13 @@ class LogText implements Iterator
     }
 
     /**
-     * Lines up everything until a whitespace.
-     *
-     * @return string[]
+     * Returns the next line or <code>null</code>,
+     * if there are no lines remaining.
      */
-    public function linesUpToNextWhitespaceLine()
+    public function previousLine()
     {
-        return $this->linesUpToNextMatchingLine("/^\\s*$/");
+        $this->row--;
+        return $this->current();
     }
 
     /**
@@ -147,7 +147,7 @@ class LogText implements Iterator
      */
     public function valid()
     {
-        return $this->row < count($this->lines);
+        return $this->row >= 0 && $this->row < count($this->lines);
     }
 
     /**

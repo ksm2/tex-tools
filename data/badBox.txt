@@ -1,0 +1,25 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/MacPorts 2014_1) (preloaded format=latex)
+ restricted \write18 enabled.
+entering extended mode
+(./data/test.tex
+LaTeX2e <2011/06/27>
+Babel <3.9f> and hyphenation patterns for 7 languages loaded.
+(/opt/local/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/opt/local/share/texmf-texlive/tex/latex/base/size12.clo))
+(/opt/local/share/texmf-texlive/tex/latex/base/inputenc.sty
+(/opt/local/share/texmf-texlive/tex/latex/base/utf8.def
+(/opt/local/share/texmf-texlive/tex/latex/base/t1enc.dfu)
+(/opt/local/share/texmf-texlive/tex/latex/base/ot1enc.dfu)
+(/opt/local/share/texmf-texlive/tex/latex/base/omsenc.dfu)))
+No file test.aux.
+
+Underfull \hbox (badness 10000) in paragraph at lines 6--6
+[]\OT1/cmr/m/n/12 too wide
+
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 6--7
+[]$[]$ 
+[1] (./test.aux) )
+(see the transcript file for additional information)
+Output written on test.dvi (1 page, 260 bytes).
+Transcript written on test.log.

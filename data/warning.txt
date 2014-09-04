@@ -1,0 +1,29 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/MacPorts 2014_1) (preloaded format=latex)
+ restricted \write18 enabled.
+entering extended mode
+(./data/test.tex
+LaTeX2e <2011/06/27>
+Babel <3.9f> and hyphenation patterns for 7 languages loaded.
+(/opt/local/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/opt/local/share/texmf-texlive/tex/latex/base/size12.clo))
+(/opt/local/share/texmf-texlive/tex/latex/base/inputenc.sty
+(/opt/local/share/texmf-texlive/tex/latex/base/utf8.def
+(/opt/local/share/texmf-texlive/tex/latex/base/t1enc.dfu)
+(/opt/local/share/texmf-texlive/tex/latex/base/ot1enc.dfu)
+(/opt/local/share/texmf-texlive/tex/latex/base/omsenc.dfu))) (./test.aux)
+
+LaTeX Font Warning: Font shape `OT1/cmr/bx/sc' undefined
+(Font)              using `OT1/cmr/bx/n' instead on input line 6.
+
+
+LaTeX Font Warning: Font shape `OT1/cmss/bx/it' undefined
+(Font)              using `OT1/cmss/bx/n' instead on input line 6.
+
+[1] (./test.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+Output written on test.dvi (1 page, 284 bytes).
+Transcript written on test.log.
