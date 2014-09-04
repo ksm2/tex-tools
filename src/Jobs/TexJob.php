@@ -30,7 +30,6 @@ class TexJob extends Job
         foreach (glob($this->getPath() . '.*') as $file) {
             $format = FileFormat::fromPath($file);
             if ($format !== $this->getInputFormat() && FileFormat::isKnownFormat($format)) {
-                echo "Deleting " . FileFormat::describe($format) . " ...\n";
                 unlink($file);
             }
         }

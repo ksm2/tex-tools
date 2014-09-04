@@ -31,12 +31,18 @@ abstract class AbstractExecutable implements ExecutableInterface
 
     /**
      * Creates a new TeX executable.
+     *
+     * @throws \CornyPhoenix\Tex\Exceptions\MissingExecutableException
      */
     public function __construct()
     {
         // Find executable
         $finder = new ExecutableFinder();
         $this->path = $finder->find($this->getName());
+
+        if (null === $this->path) {
+            throw $this->createMissingExecutableException();
+        }
 
         // Create a process builder
         $this->processBuilder = $this->createProcessBuilder();
@@ -115,6 +121,39 @@ abstract class AbstractExecutable implements ExecutableInterface
     }
 
     /**
+     * Creates a process for a TeX Job.
+     *
+     * @param Job $job
+     * @return \Symfony\Component\Process\Process
+     */
+    protected function createProcess(Job $job)
+    {
+        $process = $this->processBuilder->setJob($job)->getProcess();
+        return $process;
+    }
+
+    /**
+     * Creates the process builder.
+     *
+     * @return JobProcessBuilder
+     */
+    private function createProcessBuilder()
+    {
+        return new JobProcessBuilder($this);
+    }
+
+    /**
+     * Creates an MissingExecutableException.
+     *
+     * @return Tex\Exceptions\MissingExecutableException
+     */
+    private function createMissingExecutableException()
+    {
+        $f = 'Could not find `%s` on your system – have you checked "open_basedir" in php.ini?';
+        return new Tex\Exceptions\MissingExecutableException(sprintf($f, $this->getName()));
+    }
+
+    /**
      * Creates an InputFileMissingException.
      *
      * @return Tex\Exceptions\SpecificationException
@@ -135,27 +174,5 @@ abstract class AbstractExecutable implements ExecutableInterface
         return new Tex\Exceptions\SpecificationException(
             sprintf('The input file format `%s` is not provided by job %s.', $this->getInputFormat(), $job->getName())
         );
-    }
-
-    /**
-     * Creates a process for a TeX Job.
-     *
-     * @param Job $job
-     * @return \Symfony\Component\Process\Process
-     */
-    protected function createProcess(Job $job)
-    {
-        $process = $this->processBuilder->setJob($job)->getProcess();
-        return $process;
-    }
-
-    /**
-     * Creates the process builder.
-     *
-     * @return JobProcessBuilder
-     */
-    private function createProcessBuilder()
-    {
-        return new JobProcessBuilder($this);
     }
 }

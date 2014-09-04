@@ -2,14 +2,13 @@
 
 namespace CornyPhoenix\Tex\Jobs;
 
+use CornyPhoenix\Tex\Exceptions\CompilationException;
 use CornyPhoenix\Tex\Exceptions\LogicException;
 use CornyPhoenix\Tex\Executables\ExecutableInterface;
 use CornyPhoenix\Tex\FileFormat;
 use CornyPhoenix\Tex\InteractionMode;
 use CornyPhoenix\Tex\Log\Log;
 use CornyPhoenix\Tex\Log\LogParser;
-use CornyPhoenix\Tex\Results\ErrorResult;
-use CornyPhoenix\Tex\Results\ResultInterface;
 use InvalidArgumentException;
 
 /**
@@ -31,7 +30,7 @@ class Job
      *
      * @var bool
      */
-    private $hasErrors;
+    private $havingErrors;
 
     /**
      * The output returned by the last process.
@@ -152,13 +151,23 @@ class Job
     }
 
     /**
+     * Returns the file path of this TeX Job.
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->directory . '/' . $this->name;
+    }
+
+    /**
      * Returns whether a run had an error.
      *
      * @return bool
      */
     public function hasErrors()
     {
-        return $this->hasErrors;
+        return $this->havingErrors;
     }
 
     /**
@@ -177,7 +186,7 @@ class Job
      * @throws LogicException
      * @return Log
      */
-    public function getLog()
+    public function createLog()
     {
         if (null === $this->lastOutput) {
             throw new LogicException('You have to run the job first.');
@@ -334,19 +343,26 @@ class Job
      *
      * @param string $executableClass
      * @param callable $callback
+     * @throws \CornyPhoenix\Tex\Exceptions\CompilationException
+     * @throws \CornyPhoenix\Tex\Exceptions\MissingExecutableException
      * @return $this
      */
     public function run($executableClass, callable $callback = null)
     {
-        if (!$this->hasErrors) {
+        if (!$this->hasErrors()) {
             $executable = $this->findExecutableByClass($executableClass);
 
+            // Get a process
             $process = $executable->runJob($this, $callback);
-            if (1 === $process->getExitCode()) {
-                $this->hasErrors = true; // Prevents further runs
-            }
 
+            // Get output for logging purposes
             $this->lastOutput = $process->getOutput();
+
+            // Error handling
+            if (1 === $process->getExitCode()) {
+                $this->havingErrors = true; // Prevents further runs
+                throw $this->createCompilationException();
+            }
         }
 
         return $this;
@@ -365,7 +381,7 @@ class Job
     /**
      * Sets default values on the job.
      */
-    private function setDefaults()
+    protected function setDefaults()
     {
         $this->interactionMode = InteractionMode::NONSTOP_MODE;
         $this->outputDirectory = null;
@@ -373,18 +389,8 @@ class Job
         $this->syncTex = null;
         $this->shellEscape = false;
         $this->draftMode = false;
-        $this->hasErrors = false;
+        $this->havingErrors = false;
         $this->lastOutput = null;
-    }
-
-    /**
-     * Returns the file path of this TeX Job.
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->directory . '/' . $this->name;
     }
 
     /**
@@ -409,7 +415,7 @@ class Job
      *
      * @param string $executableClass
      * @return \CornyPhoenix\Tex\Executables\ExecutableInterface
-     * @internal
+     * @throws \CornyPhoenix\Tex\Exceptions\MissingExecutableException
      */
     private function findExecutableByClass($executableClass)
     {
@@ -432,5 +438,15 @@ class Job
         $formatLength = strlen($this->inputFormat);
         $name = substr($path, $directoryLength + 1, strlen($path) - $directoryLength - $formatLength - 2);
         return $name;
+    }
+
+    /**
+     * Creates a CompilationException.
+     *
+     * @return CompilationException
+     */
+    private function createCompilationException()
+    {
+        return new CompilationException(sprintf('An error occurred during compilation of job %s.', $this->getName()));
     }
 }

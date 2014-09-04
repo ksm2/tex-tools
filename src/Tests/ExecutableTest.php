@@ -42,4 +42,15 @@ class ExecutableTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($pdflatex->isSupportingOutputFormat(FileFormat::TEX));
         $this->assertFalse($pdflatex->isSupportingOutputFormat(FileFormat::POST_SCRIPT));
     }
+
+    /**
+     * Tests if an exception will be thrown if executable is missing.
+     *
+     * @expectedException \CornyPhoenix\Tex\Exceptions\MissingExecutableException
+     * @test
+     */
+    public function testMissingExecutable()
+    {
+        new InvalidExecutable();
+    }
 }
