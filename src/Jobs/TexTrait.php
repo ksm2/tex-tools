@@ -4,6 +4,7 @@ namespace CornyPhoenix\Tex\Jobs;
 
 use CornyPhoenix\Tex\Executables\Tex\BibTex8Executable;
 use CornyPhoenix\Tex\Executables\Tex\BibTexExecutable;
+use CornyPhoenix\Tex\Executables\Tex\DviPsExecutable;
 use CornyPhoenix\Tex\Executables\Tex\MakeIndexExecutable;
 use CornyPhoenix\Tex\Executables\Tex\PdfTexExecutable;
 use CornyPhoenix\Tex\Executables\Tex\TexExecutable;
@@ -52,5 +53,17 @@ trait TexTrait
         $this->addProvidedFormats([FileFormat::INDEX]);
 
         return $this->run(MakeIndexExecutable::class, $callback);
+    }
+
+    /**
+     * Runs the DviPs command, which converts DVI
+     * file format to PostScript.
+     *
+     * @param callable $callback
+     * @return $this
+     */
+    public function runDviPs(callable $callback = null)
+    {
+        return $this->run(DviPsExecutable::class, $callback);
     }
 }

@@ -33,6 +33,7 @@ The following TeX commands are supported:
 | BibTeX | `.aux` | `.bbl`, `.blg` |
 | BibTeX8 | `.aux` | `.bbl`, `.blg` |
 | MakeIndex | `.idx` | `.ind`, `.ilg` |
+| DviPs | `.dvi` | `.ps` |
 
 ## Usage
 
