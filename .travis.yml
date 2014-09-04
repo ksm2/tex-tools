@@ -9,8 +9,15 @@ before_script:
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction --prefer-source --dev
 
+addons:
+  code_climate:
+    repo_token: ae455ede111de56d5caee6808e1a5a31516467fc3b1627a2cbe4e70d512a8caf
+
 script:
-  - vendor/bin/phpunit --verbose --coverage-text
+  - vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml
+
+after_script:
+  - vendor/bin/test-reporter
 
 matrix:
   allow_failures:

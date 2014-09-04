@@ -1,6 +1,6 @@
 # TeX Tools for PHP 
 
-[![Build Status](https://travis-ci.org/CornyPhoenix/tex-tools.svg?branch=master)](https://travis-ci.org/CornyPhoenix/tex-tools) [![Code Climate](https://codeclimate.com/github/CornyPhoenix/tex-tools/badges/gpa.svg)](https://codeclimate.com/github/CornyPhoenix/tex-tools)
+[![Build Status](https://travis-ci.org/CornyPhoenix/tex-tools.svg?branch=master)](https://travis-ci.org/CornyPhoenix/tex-tools) [![Code Climate](https://codeclimate.com/github/CornyPhoenix/tex-tools/badges/gpa.svg)](https://codeclimate.com/github/CornyPhoenix/tex-tools) [![Test Coverage](https://codeclimate.com/github/CornyPhoenix/tex-tools/badges/coverage.svg)](https://codeclimate.com/github/CornyPhoenix/tex-tools)
 
 > PHP library for (La)TeX abstraction
 
