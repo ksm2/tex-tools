@@ -113,10 +113,10 @@ class LogParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Font shape `OT1/cmss/bx/it\' undefined', $warning->getMessage(), 'Wrong warning message');
         $this->assertEquals(6, $warning->getLine(), 'Wrong warning line');
         $this->assertEquals('./data/test.tex', $warning->getFilename(), 'Wrong warning filename');
-        $this->assertStringStartsWith('using `OT1/cmss/bx/n\' instead', $warning->getContent(), 'Wrong warning content');
+        $this->assertStringStartsWith('using `OT1/cmss/bx/n\' instead', $warning->getContent(), 'Wrong content');
 
         $warning = $log->getWarnings()[2];
-        $this->assertEquals('Some font shapes were not available, defaults substituted.', $warning->getMessage(), 'Wrong warning message');
+        $this->assertEquals('Some font shapes were not available, defaults substituted.', $warning->getMessage());
         $this->assertNull($warning->getLine(), 'Wrong warning line');
         $this->assertEquals('./data/test.tex', $warning->getFilename(), 'Wrong warning filename');
         $this->assertEmpty($warning->getContent(), 'Wrong warning content');

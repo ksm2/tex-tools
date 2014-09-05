@@ -28,7 +28,10 @@
         <whitelist>
             <directory>./src/</directory>
             <exclude>
-                <directory>./src/Tests</directory>
+                <directory suffix="Interface.php">./src/</directory>
+                <directory>./src/Tests/</directory>
+                <directory>./src/Exceptions/</directory>
+                <directory>./src/Exceptions/</directory>
             </exclude>
         </whitelist>
     </filter>

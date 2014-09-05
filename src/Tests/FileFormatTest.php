@@ -14,6 +14,11 @@ use CornyPhoenix\Tex\FileFormat;
 class FileFormatTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * Tests the isKnownFormat method.
+     *
+     * @test
+     */
     public function testKnowsFormats()
     {
         $this->assertTrue(FileFormat::isKnownFormat(FileFormat::TEX));
@@ -25,6 +30,11 @@ class FileFormatTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(FileFormat::isKnownFormat('...'));
     }
 
+    /**
+     * Tests the describe method.
+     *
+     * @test
+     */
     public function testDescribe()
     {
         $this->assertEquals('TeX source file', FileFormat::describe(FileFormat::TEX));
@@ -36,6 +46,11 @@ class FileFormatTest extends \PHPUnit_Framework_TestCase
         $this->assertNull(FileFormat::describe('...'));
     }
 
+    /**
+     * Tests the fromPath method.
+     *
+     * @test
+     */
     public function testFormatFromPath()
     {
         $this->assertEquals('tex', FileFormat::fromPath('/just/some/path/simple.tex'));

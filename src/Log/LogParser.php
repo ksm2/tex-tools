@@ -72,13 +72,6 @@ class LogParser
     private $currentFilePath;
 
     /**
-     * The file stack.
-     *
-     * @var string[]
-     */
-    private $fileStack;
-
-    /**
      * Creates a log parser.
      *
      * @param string $text
@@ -90,7 +83,6 @@ class LogParser
         $this->messages = [];
         $this->rootFileList = [];
         $this->openParenthesises = 0;
-        $this->fileStack = [];
     }
 
     /**
@@ -100,20 +92,12 @@ class LogParser
      */
     public function parse()
     {
+        $fileStack = array();
         foreach ($this->logText as $currentLine) {
             $this->currentLine = $currentLine;
 
             if ($this->currentLineIsError()) {
-                $message = substr($currentLine, 2);
-                $content = implode("\n", $this->logText->linesUpToNextMatchingLine("/^l\\.[0-9]+/"));
-
-                // Find line number
-                $line = null;
-                if (0 !== preg_match("/l\\.([0-9]+)/", $content, $matches)) {
-                    $line = intval($matches[1], 10);
-                }
-
-                $this->messages[] = new Message($message, Message::ERROR, $this->currentFilePath, $line, $content);
+                $this->parseError($currentLine);
             } elseif ($this->currentLineIsWarning()) {
                 $this->parseSingleWarningLine(self::GENERAL_WARNING_REGEX);
             } elseif ($this->currentLineIsFontWarning()) {
@@ -125,7 +109,7 @@ class LogParser
             } elseif ($this->currentLineIsNatbibWarning()) {
                 $this->parseSingleWarningLine(self::NATBIB_WARNING_REGEX);
             } else {
-                $this->parseParenthesisesForFileNames();
+                $fileStack = $this->parseParenthesisesForFileNames($fileStack);
             }
         }
 
@@ -288,9 +272,31 @@ class LogParser
     }
 
     /**
-     * Check if we're entering or leaving a new file in $this line
+     * Parses an error message.
+     *
+     * @param string $currentLine
      */
-    private function parseParenthesisesForFileNames()
+    private function parseError($currentLine)
+    {
+        $message = substr($currentLine, 2);
+        $content = implode("\n", $this->logText->linesUpToNextMatchingLine("/^l\\.[0-9]+/"));
+
+        // Find line number
+        $line = null;
+        if (0 !== preg_match("/l\\.([0-9]+)/", $content, $matches)) {
+            $line = intval($matches[1], 10);
+        }
+
+        $this->messages[] = new Message($message, Message::ERROR, $this->currentFilePath, $line, $content);
+    }
+
+    /**
+     * Check if we're entering or leaving a new file in $this line
+     *
+     * @param array $fileStack
+     * @return array
+     */
+    private function parseParenthesisesForFileNames(array $fileStack)
     {
         if (0 !== preg_match("/\\(|\\)/", $this->currentLine, $offsets, PREG_OFFSET_CAPTURE)) {
             $pos = $offsets[0][1];
@@ -298,27 +304,14 @@ class LogParser
             $this->currentLine = substr($this->currentLine, $pos + 1);
 
             if ($token == "(") {
-                $filePath = $this->consumeFilePath();
-                if ($filePath) {
-                    $this->currentFilePath = $filePath;
-
-                    $newFile = array(
-                        'path' => $filePath,
-                        'files' => [],
-                    );
-                    $this->fileStack[] = $newFile;
-                    $this->currentFileList[] = $newFile;
-                    $this->currentFileList = $newFile['files'];
-                } else {
-                    $this->openParenthesises++;
-                }
+                $fileStack = $this->parseOpenParenthesis($fileStack);
             } elseif ($token == ")") {
                 if ($this->openParenthesises > 0) {
                     $this->openParenthesises--;
                 } else {
-                    if (count($this->fileStack) > 1) {
-                        array_pop($this->fileStack);
-                        $previousFile = $this->fileStack[count($this->fileStack) - 1];
+                    if (count($fileStack) > 1) {
+                        array_pop($fileStack);
+                        $previousFile = $fileStack[count($fileStack) - 1];
                         $this->currentFilePath = $previousFile['path'];
                         $this->currentFileList = $previousFile['files'];
                     }
@@ -329,8 +322,36 @@ class LogParser
             }
 
             // Process the rest of the line
-            $this->parseParenthesisesForFileNames();
+            return $this->parseParenthesisesForFileNames($fileStack);
         }
+
+        return $fileStack;
+    }
+
+    /**
+     * Parses an opening parenthesis.
+     *
+     * @param array $fileStack
+     * @return array
+     */
+    private function parseOpenParenthesis(array $fileStack)
+    {
+        $filePath = $this->consumeFilePath();
+        if ($filePath) {
+            $this->currentFilePath = $filePath;
+
+            $newFile = array(
+                'path' => $filePath,
+                'files' => [],
+            );
+            $fileStack[] = $newFile;
+            $this->currentFileList[] = $newFile;
+            $this->currentFileList = $newFile['files'];
+        } else {
+            $this->openParenthesises++;
+        }
+
+        return $fileStack;
     }
 
     /**
