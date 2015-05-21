@@ -216,6 +216,21 @@ class Job
     }
 
     /**
+     * Returns the last output / the log as a string
+     *
+     * @throws LogicException
+     * @return string
+     */
+    public function getLastOutput()
+    {
+        if (null === $this->lastOutput) {
+            throw new LogicException('You have to run the job first.');
+        }
+
+        return $this->lastOutput;
+    }
+
+    /**
      * Returns an alternative jobname which will be passed to TeX.
      *
      * @return null|string
