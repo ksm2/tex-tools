@@ -42,7 +42,7 @@ Create a basic PdfLaTeX job and run it:
 ```php
 use CornyPhoenix\Tex\Repositories\TemporaryRepository;
 
-$job = new TemporaryRepository()->createJob( /* TeX source */ );
+$job = (new TemporaryRepository())->createJob( /* TeX source */ );
 $job->runPdfLaTex();
 $job->hasErrors(); // False if everything went fine
 ```
@@ -53,7 +53,7 @@ You can also chain LaTeX calls:
 use CornyPhoenix\Tex\Repositories\TemporaryRepository;
 use CornyPhoenix\Tex\Exceptions\CompilationException;
 
-$job = new TemporaryRepository()->createJob( /* TeX source */ );
+$job = (new TemporaryRepository())->createJob( /* TeX source */ );
 $job->runPdfLaTex()
     ->runBibTex()
     ->runMakeIndex()
@@ -67,7 +67,7 @@ There is a lovely interface for handling errors:
 use CornyPhoenix\Tex\Repositories\TemporaryRepository;
 use CornyPhoenix\Tex\Exceptions\CompilationException;
 
-$job = new TemporaryRepository()->createJob( /* TeX source */ );
+$job = (new TemporaryRepository())->createJob( /* TeX source */ );
 try {
     $job->runPdfLaTex()
         ->runBibTex()
@@ -76,7 +76,7 @@ try {
         ->runPdfLaTex();
 } catch (CompilationException $e) {
     $format = 'Error in %s, line %d: %s';
-    $log = $job->getLog();
+    $log = $job->createLog();
     
     foreach ($log->getErrors() as $error) {
         echo sprintf(

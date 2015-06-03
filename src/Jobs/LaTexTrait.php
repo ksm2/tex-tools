@@ -44,7 +44,7 @@ trait LaTexTrait
      */
     public function runXeLaTex(callable $callback = null)
     {
-        return $this->run(LaTex\XeLatexExecutable::class, $callback);
+        return $this->run(LaTex\XeLaTexExecutable::class, $callback);
     }
 
     /**
@@ -55,6 +55,6 @@ trait LaTexTrait
      */
     public function runLuaLaTex(callable $callback = null)
     {
-        return $this->run(LaTex\LuaLatexExecutable::class, $callback);
+        return $this->run(LaTex\LuaLaTexExecutable::class, $callback);
     }
 }
