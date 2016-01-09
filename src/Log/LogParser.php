@@ -84,9 +84,8 @@ class LogParser
      * Creates a log parser.
      *
      * @param string $text
-     * @param array $options
      */
-    public function __construct($text, array $options = array())
+    public function __construct($text)
     {
         $this->logText = new LogText($text);
         $this->messages = [];

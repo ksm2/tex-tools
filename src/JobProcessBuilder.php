@@ -69,9 +69,9 @@ class JobProcessBuilder extends ProcessBuilder
         $this->setArgumentValue(self::OPTION_OUTPUT_DIRECTORY, $job->getOutputDirectory());
 
         // Set bool arguments
-        $this->setArgumentBool(self::OPTION_SHELL_ESCAPE, $job->getShellEscape());
-        $this->setArgumentBool(self::OPTION_NO_SHELL_ESCAPE, !$job->getShellEscape());
-        $this->setArgumentBool(self::OPTION_DRAFT_MODE, $job->getDraftMode());
+        $this->setArgumentBool(self::OPTION_SHELL_ESCAPE, $job->isShellEscape());
+        $this->setArgumentBool(self::OPTION_NO_SHELL_ESCAPE, !$job->isShellEscape());
+        $this->setArgumentBool(self::OPTION_DRAFT_MODE, $job->isDraftMode());
 
         $this->setOutputFormat();
 

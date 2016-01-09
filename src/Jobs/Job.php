@@ -266,7 +266,7 @@ class Job
      *
      * @return bool
      */
-    public function getDraftMode()
+    public function isDraftMode()
     {
         return $this->draftMode;
     }
@@ -337,7 +337,7 @@ class Job
      *
      * @return boolean
      */
-    public function getShellEscape()
+    public function isShellEscape()
     {
         return $this->shellEscape;
     }

@@ -154,8 +154,8 @@ abstract class AbstractExecutable implements ExecutableInterface
      */
     private function createMissingExecutableException()
     {
-        $f = 'Could not find `%s` on your system – have you checked "open_basedir" in php.ini?';
-        return new Tex\Exceptions\MissingExecutableException(sprintf($f, $this->getName()));
+        $format = 'Could not find `%s` on your system – have you checked "open_basedir" in php.ini?';
+        return new Tex\Exceptions\MissingExecutableException(sprintf($format, $this->getName()));
     }
 
     /**
