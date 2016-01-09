@@ -1,6 +1,7 @@
 {
     "name": "corny-phoenix/tex-tools",
     "type": "library",
+    "version": "0.1",
     "description": "PHP library for (La)TeX abstraction",
     "keywords": ["tex", "latex", "xelatex", "lualatex", "bibtex", "pdf", "post script"],
     "homepage": "https://github.com/CornyPhoenix/tex-tools",
