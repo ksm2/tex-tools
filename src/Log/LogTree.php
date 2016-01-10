@@ -84,6 +84,12 @@ class LogTree implements \Iterator
         $blockStack->push(null);
         for ($i = 0; $i < strlen($text); $i++) {
             if ('(' === $text[$i]) {
+                $next = $text[$i + 1];
+                if ($next !== '/' && $next !== '.') {
+                    $blockStack->push(false);
+                    continue;
+                }
+
                 // Increase nesting.
                 $nesting++;
 
@@ -103,7 +109,12 @@ class LogTree implements \Iterator
             }
 
             if (')' === $text[$i]) {
-                $block = $blocks[$blockStack->pop()];
+                $pop = $blockStack->pop();
+                if ($pop === false) {
+                    continue;
+                }
+
+                $block = $blocks[$pop];
                 $block->end = $i - 1;
 
                 // Decrease nesting.
@@ -136,21 +147,15 @@ class LogTree implements \Iterator
      */
     private function validateBlocks(array $blocks)
     {
-        $id = 0;
-        $map = [];
         $result = [];
         foreach ($blocks as $block) {
             $content = $this->getBlockContent($block);
             if (preg_match('#^(\.?/[\w/\.-]+)\s?#s', $content, $matches)) {
                 list($all, $filename) = $matches;
-                $map[$block->id] = $id;
-                $block->id = $id;
-                $block->parent = $map[$block->parent];
                 $block->filename = $filename;
                 $block->start += min(strlen($all), $block->end);
 
-                $id++;
-                $result[] = $block;
+                $result[$block->id] = $block;
             }
         }
 

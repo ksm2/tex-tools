@@ -34,7 +34,8 @@ class FontElementParser implements ElementParserInterface
         $messages = [];
         preg_match_all(self::REGEX, $element->getContent(), $matches, PREG_SET_ORDER);
         foreach ($matches as $match) {
-            list(, , $content1, , $content2) = $match;
+            $content1 = isset($match[2]) ? $match[2] : '';
+            $content2 = isset($match[4]) ? $match[4] : '';
 
             $line = null;
             if (preg_match('# on input line (\d+)\.$#', $content2, $lineMatch)) {
