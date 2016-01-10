@@ -18,10 +18,11 @@ namespace CornyPhoenix\Tex\Log;
  */
 class Message
 {
-    const ERROR = 3;
-    const WARNING = 2;
-    const BAD_BOX = 1;
-    const NOTE = 0;
+    const DEBUG = 0;
+    const INFO = 1;
+    const BAD_BOX = 2;
+    const WARNING = 3;
+    const ERROR = 4;
 
     /**
      * The message log level
@@ -57,6 +58,14 @@ class Message
      * @var int
      */
     private $line;
+
+    private static $levels = [
+        self::DEBUG     => 'debug',
+        self::INFO      => 'info',
+        self::BAD_BOX   => 'badbox',
+        self::WARNING   => 'warning',
+        self::ERROR     => 'error',
+    ];
 
     /**
      * Creates a new LaTeX message.
@@ -104,6 +113,14 @@ class Message
     public function getLevel()
     {
         return $this->level;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLevelStr()
+    {
+        return self::$levels[$this->getLevel()];
     }
 
     /**

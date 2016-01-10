@@ -19,48 +19,20 @@ class Log
 {
 
     /**
-     * Errors during TeX compilation.
-     *
-     * @var Message[]
-     */
-    private $errors;
-
-    /**
-     * Warnings during TeX compilation.
-     *
-     * @var Message[]
-     */
-    private $warnings;
-
-    /**
-     * Bad boxes during TeX compilation.
-     *
-     * @var Message[]
-     */
-    private $badBoxes;
-
-    /**
      * All messages that occurred during TeX compilation.
      *
      * @var Message[]
      */
-    private $all;
+    private $messages;
 
     /**
      * Creates a log object.
      *
-     * @param Message[] $all
-     * @param Message[] $badBoxes
-     * @param Message[] $errors
-     * @param Message[] $warnings
-     * @internal param \string[] $rootFiles
+     * @param Message[] $messages
      */
-    public function __construct(array $all, array $badBoxes, array $errors, array $warnings)
+    public function __construct(array $messages)
     {
-        $this->all = $all;
-        $this->badBoxes = $badBoxes;
-        $this->errors = $errors;
-        $this->warnings = $warnings;
+        $this->messages = $messages;
     }
 
     /**
@@ -70,7 +42,9 @@ class Log
      */
     public function getErrors()
     {
-        return $this->errors;
+        return array_filter($this->messages, function (Message $message) {
+            return Message::ERROR === $message->getLevel();
+        });
     }
 
     /**
@@ -80,7 +54,9 @@ class Log
      */
     public function getWarnings()
     {
-        return $this->warnings;
+        return array_filter($this->messages, function (Message $message) {
+            return Message::WARNING === $message->getLevel();
+        });
     }
 
     /**
@@ -90,7 +66,9 @@ class Log
      */
     public function getBadBoxes()
     {
-        return $this->badBoxes;
+        return array_filter($this->messages, function (Message $message) {
+            return Message::BAD_BOX === $message->getLevel();
+        });
     }
 
     /**
@@ -100,6 +78,6 @@ class Log
      */
     public function getAllMessages()
     {
-        return $this->all;
+        return $this->messages;
     }
 }

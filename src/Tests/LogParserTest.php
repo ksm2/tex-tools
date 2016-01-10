@@ -59,16 +59,16 @@ class LogParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $log->getBadBoxes(), 'Parser should have detected 2 bad boxes');
 
         $badBox1 = $log->getBadBoxes()[0];
-        $this->assertStringStartsWith('Underfull \\hbox', $badBox1->getMessage(), 'Wrong bad box message');
+        $this->assertEquals('Bad Box', $badBox1->getMessage(), 'Wrong bad box content');
+        $this->assertEquals('Badness 10000 underfull horizontal box.', $badBox1->getContent(), 'Wrong bad box message');
         $this->assertEquals(6, $badBox1->getLine(), 'Wrong bad box line');
         $this->assertEquals('./data/test.tex', $badBox1->getFilename(), 'Wrong bad box filename');
-        $this->assertEmpty($badBox1->getContent(), 'Wrong bad box content');
 
         $badBox2 = $log->getBadBoxes()[1];
-        $this->assertStringStartsWith('Overfull \\hbox', $badBox2->getMessage(), 'Wrong bad box message');
+        $this->assertEquals('Bad Box', $badBox2->getMessage(), 'Wrong bad box content');
+        $this->assertEquals('17.62482pt too wide overfull horizontal box.', $badBox2->getContent(), 'Wrong bad box message');
         $this->assertEquals(6, $badBox2->getLine(), 'Wrong bad box line');
         $this->assertEquals('./data/test.tex', $badBox2->getFilename(), 'Wrong bad box filename');
-        $this->assertEmpty($badBox2->getContent(), 'Wrong bad box content');
     }
 
     /**
@@ -89,7 +89,7 @@ class LogParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $log->getAllMessages(), 'Parser should only have detected 1 message');
 
         $error = $log->getErrors()[0];
-        $this->assertEquals('Undefined control sequence.', $error->getMessage(), 'Wrong error message');
+        $this->assertEquals('Undefined control sequence', $error->getMessage(), 'Wrong error message');
         $this->assertEquals(6, $error->getLine(), 'Wrong error line');
         $this->assertEquals('./data/test.tex', $error->getFilename(), 'Wrong error filename');
         $this->assertStringEndsWith('\tableofcotnetns', $error->getContent(), 'Wrong error content');
@@ -113,21 +113,21 @@ class LogParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(3, $log->getAllMessages(), 'Parser should only have detected 3 messages');
 
         $warning = $log->getWarnings()[0];
-        $this->assertEquals('Font shape `OT1/cmr/bx/sc\' undefined', $warning->getMessage(), 'Wrong warning message');
+        $this->assertEquals('Font', $warning->getMessage(), 'Wrong warning message');
         $this->assertEquals(6, $warning->getLine(), 'Wrong warning line');
         $this->assertEquals('./data/test.tex', $warning->getFilename(), 'Wrong warning filename');
-        $this->assertStringStartsWith('using `OT1/cmr/bx/n\' instead', $warning->getContent(), 'Wrong warning content');
+        $this->assertEquals('Font shape `OT1/cmr/bx/sc\' undefined', $warning->getContent(), 'Wrong warning content');
 
         $warning = $log->getWarnings()[1];
-        $this->assertEquals('Font shape `OT1/cmss/bx/it\' undefined', $warning->getMessage(), 'Wrong warning message');
+        $this->assertEquals('Font', $warning->getMessage(), 'Wrong warning message');
         $this->assertEquals(6, $warning->getLine(), 'Wrong warning line');
         $this->assertEquals('./data/test.tex', $warning->getFilename(), 'Wrong warning filename');
-        $this->assertStringStartsWith('using `OT1/cmss/bx/n\' instead', $warning->getContent(), 'Wrong content');
+        $this->assertEquals('Font shape `OT1/cmss/bx/it\' undefined', $warning->getContent(), 'Wrong content');
 
         $warning = $log->getWarnings()[2];
-        $this->assertEquals('Some font shapes were not available, defaults substituted.', $warning->getMessage());
+        $this->assertEquals('Font', $warning->getMessage(), 'Wrong warning message');
         $this->assertNull($warning->getLine(), 'Wrong warning line');
         $this->assertEquals('./data/test.tex', $warning->getFilename(), 'Wrong warning filename');
-        $this->assertEmpty($warning->getContent(), 'Wrong warning content');
+        $this->assertEquals('Some font shapes were not available, defaults substituted.', $warning->getContent());
     }
 }

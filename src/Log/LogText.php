@@ -11,14 +11,12 @@
 
 namespace CornyPhoenix\Tex\Log;
 
-use Iterator;
-
 /**
  * Class wrapping TeX log text logic.
  *
  * @package CornyPhoenix\Tex\Jobs
  */
-class LogText implements Iterator
+class LogText
 {
 
     const LOG_WRAP_LIMIT = 80;
@@ -38,135 +36,118 @@ class LogText implements Iterator
     private $row;
 
     /**
+     * @var string
+     */
+    private $prologue;
+
+    /**
+     * @var string
+     */
+    private $epilogue;
+
+    /**
      * Creates a log text wrapper.
      *
      * @param string $text
      */
     public function __construct($text)
     {
-        // Prevent CR/LF problems
-        $text = preg_replace("/(\\r\\n)|\\r/", "\n", $text);
+        $this->setText($text);
+    }
 
-        // Join any lines which look like they have wrapped.
-        $wrappedLines = explode("\n", $text);
-        $this->lines = [$wrappedLines[0]];
-        for ($i = 1; $i < count($wrappedLines); $i++) {
-            // If the previous line is as long as the wrap limit then
-            // append $this line to it.
-            // Some lines end with ... when LaTeX knows it's hit the limit
-            // These shouldn't be wrapped.
-            if (strlen($wrappedLines[$i - 1]) == self::LOG_WRAP_LIMIT && substr($wrappedLines[$i - 1], -3) !== "...") {
-                $this->lines[count($this->lines) - 1] .= $wrappedLines[$i];
-            } elseif (!empty($wrappedLines[$i])) {
-                $this->lines[] = $wrappedLines[$i];
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return implode("\n", $this->lines);
+    }
+
+    /**
+     * @param string $text
+     */
+    public function setText($text)
+    {
+        // Make lines array out of text.
+        $wrappedLines = explode("\n", preg_replace("/(\\r\\n)|\\r/", "\n", $text));
+
+        // Find start and ending line.
+        for ($startLine = 0; $startLine < count($wrappedLines); $startLine++) {
+            if ('(' === $wrappedLines[$startLine][0]) {
+                break;
+            }
+        }
+        for ($endingLine = count($wrappedLines) - 1; $endingLine >= 0; $endingLine--) {
+            if (')' === substr(rtrim($wrappedLines[$endingLine]), -1)) {
+                break;
             }
         }
 
-        $this->rewind();
+        // Set prologue and epilogue.
+        $this->prologue = implode("\n", array_slice($wrappedLines, 0, $startLine));
+        $this->epilogue = implode("\n", array_slice($wrappedLines, $endingLine + 1));
+
+        // Cut off prologue and epilogue.
+        $wrappedLines = array_slice($wrappedLines, $startLine, $endingLine - $startLine + 1);
+
+        // Unwrap the given lines and rewind to the beginning.
+        $this->lines = $this->unwrapLines($wrappedLines);
     }
 
     /**
-     * Returns the next line or <code>null</code>,
-     * if there are no lines remaining.
-     *
-     * @return null|string
+     * @return \string[]
      */
-    public function nextLine()
+    public function getLines()
     {
-        $this->next();
-        return $this->current();
+        return $this->lines;
     }
 
     /**
-     * Returns the next line or <code>null</code>,
-     * if there are no lines remaining.
+     * @return int
      */
-    public function previousLine()
-    {
-        $this->row--;
-        return $this->current();
-    }
-
-    /**
-     * Lines up everything until a pattern matches.
-     *
-     * @param string $pattern
-     * @return string[]
-     */
-    public function linesUpToNextMatchingLine($pattern)
-    {
-        $lines = [];
-        $nextLine = $this->nextLine();
-        if (null !== $nextLine) {
-            $lines[] = $nextLine;
-        }
-        while (null !== $nextLine && 0 === preg_match($pattern, $nextLine)) {
-            $nextLine = $this->nextLine();
-            if ($nextLine !== null) {
-                $lines[] = $nextLine;
-            }
-        }
-
-        return $lines;
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
-     */
-    public function current()
-    {
-        if ($this->valid()) {
-            return $this->lines[$this->row];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
-     */
-    public function next()
-    {
-        $this->row++;
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
-     */
-    public function key()
+    public function getRow()
     {
         return $this->row;
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
+     * @return string
      */
-    public function valid()
+    public function getPrologue()
     {
-        return $this->row >= 0 && $this->row < count($this->lines);
+        return $this->prologue;
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
+     * @return string
      */
-    public function rewind()
+    public function getEpilogue()
     {
-        $this->row = 0;
+        return $this->epilogue;
+    }
+
+    /**
+     * @param array $wrappedLines
+     * @return array
+     */
+    private function unwrapLines(array $wrappedLines)
+    {
+        $lines = [$wrappedLines[0]];
+        for ($i = 1; $i < count($wrappedLines); $i++) {
+            // If the previous line is as long as the wrap limit then
+            // append $this line to it.
+            // Some lines end with ... when LaTeX knows it's hit the limit
+            // These shouldn't be wrapped.
+            if (strlen($wrappedLines[$i - 1]) + 1 === self::LOG_WRAP_LIMIT && substr(
+                    $wrappedLines[$i - 1],
+                    -3
+                ) !== "..."
+            ) {
+                $lines[count($lines) - 1] .= $wrappedLines[$i];
+            } elseif (!empty($wrappedLines[$i])) {
+                $lines[] = $wrappedLines[$i];
+            }
+        }
+        return $lines;
     }
 }
