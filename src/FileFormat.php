@@ -78,11 +78,7 @@ class FileFormat
      */
     public static function describe($format)
     {
-        if (self::isKnownFormat($format)) {
-            return self::$descriptions[$format];
-        } else {
-            return null;
-        }
+        return self::isKnownFormat($format) ? self::$descriptions[$format] : null;
     }
 
     /**

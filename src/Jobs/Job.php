@@ -372,11 +372,7 @@ class Job
      */
     public function setSyncTex($syncTex)
     {
-        if (null === $syncTex) {
-            $this->syncTex = null;
-        } else {
-            $this->syncTex = intval($syncTex);
-        }
+        $this->syncTex = null === $syncTex ? null : intval($syncTex);
 
         return $this;
     }

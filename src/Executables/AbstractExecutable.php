@@ -79,18 +79,18 @@ abstract class AbstractExecutable implements ExecutableInterface
     {
         if (!in_array($this->getInputFormat(), $job->getProvidedFormats())) {
             throw $this->createInputFormatNotProvidedException($job);
-        } else {
-            $inputFilePath = $job->getPath() . '.' . $this->getInputFormat();
-
-            if (!file_exists($inputFilePath)) {
-                throw $this->createInputFileMissingException();
-            } else {
-                $process = $this->createProcess($job);
-                $process->run($callback);
-
-                return $process;
-            }
         }
+
+        $inputFilePath = $job->getPath() . '.' . $this->getInputFormat();
+
+        if (!file_exists($inputFilePath)) {
+            throw $this->createInputFileMissingException();
+        }
+
+        $process = $this->createProcess($job);
+        $process->run($callback);
+
+        return $process;
     }
 
     /**
