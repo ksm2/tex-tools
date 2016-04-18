@@ -107,7 +107,7 @@ class FileFormat
         }
 
         $str = substr($basename, $pos + 1);
-        if (false === $str) {
+        if (false === $str || '' === $str) {
             return null;
         }
 
