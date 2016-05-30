@@ -77,6 +77,7 @@ class JobProcessBuilder extends ProcessBuilder
 
         // Set input file
         $this->setInputFile($job);
+        $this->setTexInputSources($job);
 
         return $this;
     }
@@ -115,6 +116,29 @@ class JobProcessBuilder extends ProcessBuilder
         if (in_array($this->executable->getOutputFormats(), [FileFormat::PDF, FileFormat::DVI])) {
             $this->setArgumentValue(self::OPTION_OUTPUT_FORMAT, $this->executable->getOutputFormats());
         }
+
+        return $this;
+    }
+
+    /**
+     * Sets the environment variables to support additional tex inputs.
+     *
+     * @return $this
+     */
+    private function setTexInputSources(Job $job)
+    {
+        if (empty($job->getAdditionalTexInputs())) {
+            return;
+        }
+
+        // All source directories are separated by colon. The last empty value references the default sources.
+        $sources = implode(':', array_merge($job->getAdditionalTexInputs(), ['']));
+
+        $this->addEnvironmentVariables([
+            'TEXINPUTS' => $sources,
+            'TTFONTS' => $sources,
+            'OPENTYPEFONTS' => $sources,
+        ]);
 
         return $this;
     }
