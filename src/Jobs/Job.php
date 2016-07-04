@@ -95,6 +95,13 @@ class Job
     private $interactionMode;
 
     /**
+     * Addtional source folders with classes and fonts that should be considererd.
+     *
+     * @var string[]
+     */
+    private $additionalTexInputs = [];
+
+    /**
      * The TeX output directory argument.
      *
      * @var string|null
@@ -303,10 +310,40 @@ class Job
     public function setInteractionMode($interactionMode)
     {
         if (!InteractionMode::modeExists($interactionMode)) {
-            throw new InvalidArgumentException('You specified a wring interaction mode "' . $interactionMode . '"');
+            throw new InvalidArgumentException('You specified a wrong interaction mode "' . $interactionMode . '"');
         }
 
         $this->interactionMode = $interactionMode;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAdditionalTexInputs()
+    {
+        return $this->additionalTexInputs;
+    }
+
+    /**
+     * @param string[] $additionalTexInputs
+     *
+     * @return $this
+     */
+    public function setAdditionalTexInputs(array $additionalTexInputs)
+    {
+        $this->additionalTexInputs = $additionalTexInputs;
+        return $this;
+    }
+
+    /**
+     * @param string[] $input
+     *
+     * @return $this
+     */
+    public function addAdditionalTexInput($input)
+    {
+        $this->additionalTexInputs[] = $input;
         return $this;
     }
 
